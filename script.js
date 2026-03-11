@@ -1,24 +1,47 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Mock Data
-    const doctors = [
-        { id: 1, name: "Dr. Sarah Jenkins", specialty: "Cardiology" },
-        { id: 2, name: "Dr. Michael Chen", specialty: "Dermatology" },
-        { id: 3, name: "Dr. Emily Stone", specialty: "Pediatrics" },
-        { id: 4, name: "Dr. James Wilson", specialty: "General Practice" },
-        { id: 5, name: "Dr. Olivia Bennett", specialty: "Neurology" }
+    const hospitals = [
+        { id: 'h1', name: 'National Hospital of Sri Lanka (NHSL), Colombo' },
+        { id: 'h2', name: 'Lady Ridgeway Hospital for Children, Colombo' },
+        { id: 'h3', name: 'Castle Street Hospital for Women' },
+        { id: 'h4', name: 'De Soysa Hospital for Women' },
+        { id: 'h5', name: 'National Cancer Institute (Apeksha Hospital), Maharagama' },
+        { id: 'h6', name: 'Eye Hospital, Colombo' },
+        { id: 'h7', name: 'Teaching Hospital Colombo South (Kalubowila)' },
+        { id: 'h8', name: 'Infectious Disease Hospital (IDH), Angoda' },
+        { id: 'h9', name: 'National Hospital (Teaching), Kandy' },
+        { id: 'h10', name: 'Sirimavo Bandaranaike Specialized Children Hospital, Peradeniya' },
+        { id: 'h11', name: 'General Hospital (Teaching), Peradeniya' },
+        { id: 'h12', name: 'Teaching Hospital Karapitiya, Galle' },
+        { id: 'h13', name: 'Anuradhapura Teaching Hospital' },
+        { id: 'h14', name: 'Jaffna Teaching Hospital' },
+        { id: 'h15', name: 'Batticaloa Teaching Hospital' },
+        { id: 'h16', name: 'Teaching Hospital - Kurunegala' },
+        { id: 'h17', name: 'Ratnapura Teaching Hospital' },
+        { id: 'h18', name: 'Provincial General Hospital, Badulla' },
+        { id: 'h19', name: 'District General Hospital, Gampaha' },
+        { id: 'h20', name: 'District General Hospital, Negombo' },
+        { id: 'h21', name: 'District General Hospital, Polonnaruwa' },
+        { id: 'h22', name: 'District General Hospital, Matale' },
+        { id: 'h23', name: 'Ampara General Hospital' },
+        { id: 'h24', name: 'Hambantota District General Hospital' },
+        { id: 'h25', name: 'Chilaw District General Hospital' }
     ];
 
-    const baseTimeSlots = [
-        "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", 
-        "11:00 AM", "11:30 AM", "01:00 PM", "01:30 PM", 
-        "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM", "04:00 PM"
+    const reportTypes = [
+        { id: 'r1', name: 'Full Blood Count (FBC)' },
+        { id: 'r2', name: 'Lipid Profile' },
+        { id: 'r3', name: 'Liver Function Test (LFT)' },
+        { id: 'r4', name: 'Thyroid Function Test' },
+        { id: 'r5', name: 'X-Ray (Chest)' },
+        { id: 'r6', name: 'MRI Scan' },
+        { id: 'r7', name: 'CT Scan' },
+        { id: 'r8', name: 'Urine Analysis' }
     ];
 
     // DOM Elements
-    const doctorSelect = document.getElementById('doctorSelect');
-    const appointmentDate = document.getElementById('appointmentDate');
-    const timeSlotsContainer = document.getElementById('timeSlots');
-    const selectedTimeSlotInput = document.getElementById('selectedTimeSlot');
+    const hospitalSelect = document.getElementById('hospitalSelect');
+    const reportTypeSelect = document.getElementById('reportTypeSelect');
     const bookingForm = document.getElementById('booking-form');
     
     // Modal Elements
@@ -31,13 +54,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize the app
     function init() {
-        populateDoctors();
-        setMinDate();
+        populateHospitals();
+        populateReportTypes();
         loadRecentBooking();
         
         // Event Listeners
-        doctorSelect.addEventListener('change', generateTimeSlots);
-        appointmentDate.addEventListener('change', generateTimeSlots);
         bookingForm.addEventListener('submit', handleBookingSubmit);
         
         // Modal events
@@ -48,116 +69,65 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Populate the dropdown
-    function populateDoctors() {
-        doctors.forEach(doc => {
+    function populateHospitals() {
+        hospitals.forEach(hosp => {
             const option = document.createElement('option');
-            option.value = doc.id;
-            option.textContent = `${doc.name} - ${doc.specialty}`;
-            doctorSelect.appendChild(option);
+            option.value = hosp.id;
+            option.textContent = hosp.name;
+            hospitalSelect.appendChild(option);
         });
     }
 
-    // Set minimum date to today
-    function setMinDate() {
-        const today = new Date();
-        const yyyy = today.getFullYear();
-        let mm = today.getMonth() + 1; // Months start at 0
-        let dd = today.getDate();
-
-        if (dd < 10) dd = '0' + dd;
-        if (mm < 10) mm = '0' + mm;
-
-        const formattedToday = yyyy + '-' + mm + '-' + dd;
-        appointmentDate.setAttribute('min', formattedToday);
-    }
-
-    // Generate time slots based on doctor and date selection
-    function generateTimeSlots() {
-        const doctorId = doctorSelect.value;
-        const date = appointmentDate.value;
-        
-        selectedTimeSlotInput.value = ''; // Reset selection
-
-        if (!doctorId || !date) {
-            timeSlotsContainer.innerHTML = '<p class="placeholder-text">Please select a doctor and date first.</p>';
-            return;
-        }
-
-        timeSlotsContainer.innerHTML = ''; // Clear container
-        
-        // Simple mock: disable some random slots based on string hash to make it look realistic but deterministic
-        const seed = doctorId + date;
-        let hash = 0;
-        for (let i = 0; i < seed.length; i++) {
-            hash = ((hash << 5) - hash) + seed.charCodeAt(i);
-            hash |= 0;
-        }
-
-        baseTimeSlots.forEach((slot, index) => {
-            const slotElement = document.createElement('div');
-            slotElement.className = 'time-slot';
-            slotElement.textContent = slot;
-            
-            // Randomly make some slots unavailable (mock logic)
-            // Use bitwise logic with hash to ensure consistent "unavailable" slots across re-renders for same day/doc
-            const isUnavailable = (Math.abs(hash * (index + 1)) % 10) > 7; 
-            
-            if (isUnavailable) {
-                slotElement.classList.add('unavailable');
-            } else {
-                slotElement.addEventListener('click', () => selectTimeSlot(slotElement, slot));
-            }
-            
-            timeSlotsContainer.appendChild(slotElement);
+    function populateReportTypes() {
+        reportTypes.forEach(report => {
+            const option = document.createElement('option');
+            option.value = report.id;
+            option.textContent = report.name;
+            reportTypeSelect.appendChild(option);
         });
-    }
-
-    function selectTimeSlot(element, time) {
-        // Remove 'selected' from all
-        const allSlots = document.querySelectorAll('.time-slot');
-        allSlots.forEach(slot => slot.classList.remove('selected'));
-        
-        // Add to clicked
-        element.classList.add('selected');
-        
-        // Update hidden input
-        selectedTimeSlotInput.value = time;
     }
 
     function handleBookingSubmit(e) {
         e.preventDefault();
         
         const patientName = document.getElementById('patientName').value.trim();
-        const doctorId = doctorSelect.value;
-        const date = appointmentDate.value;
-        const time = selectedTimeSlotInput.value;
+        const patientId = document.getElementById('patientId').value.trim();
+        const hospitalId = hospitalSelect.value;
+        const reportTypeId = reportTypeSelect.value;
+        const reportReason = document.getElementById('reportReason').value.trim();
         
-        if (!time) {
-            alert('Please select an available time slot.');
+        if (!hospitalId) {
+            alert('Please select a hospital.');
+            return;
+        }
+
+        if (!reportTypeId) {
+            alert('Please select a report type.');
             return;
         }
         
-        const selectedDoctor = doctors.find(d => d.id == doctorId);
+        const selectedHospital = hospitals.find(h => h.id === hospitalId);
+        const selectedReport = reportTypes.find(r => r.id === reportTypeId);
         
-        const appointmentData = {
+        // Use a consistent fake 'request ID' mimicking the date
+        const requestData = {
             id: Date.now().toString(),
             patientName: patientName,
-            doctorName: selectedDoctor.name,
-            specialty: selectedDoctor.specialty,
-            date: date,
-            time: time,
-            status: 'Confirmed'
+            patientId: patientId,
+            hospitalName: selectedHospital.name,
+            reportName: selectedReport.name,
+            reportReason: reportReason,
+            status: 'Submitted'
         };
         
         // Save to LocalStorage
-        saveBooking(appointmentData);
+        saveBooking(requestData);
         
         // Update Recent Booking UI
-        displayRecentBooking(appointmentData);
+        displayRecentBooking(requestData);
         
         // Show Modal
-        showModal(appointmentData);
+        showModal(requestData);
         
         // Reset Form
         bookingForm.reset();
@@ -187,32 +157,18 @@ document.addEventListener('DOMContentLoaded', () => {
         recentBookingCard.style.display = 'block';
         
         document.getElementById('dispName').textContent = data.patientName;
-        document.getElementById('dispDoctor').textContent = data.doctorName;
-        
-        // Format date nicely
-        const dateObj = new Date(data.date);
-        // adjust for timezone issues by splitting date
-        const parts = data.date.split('-');
-        const fixedDateObj = new Date(parts[0], parts[1] - 1, parts[2]);
-
-        const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
-        document.getElementById('dispDate').textContent = fixedDateObj.toLocaleDateString('en-US', options);
-        
-        document.getElementById('dispTime').textContent = data.time;
+        document.getElementById('dispId').textContent = data.patientId;
+        document.getElementById('dispHospital').textContent = data.hospitalName;
+        document.getElementById('dispReport').textContent = data.reportName;
+        document.getElementById('dispReason').textContent = data.reportReason;
     }
 
     function showModal(data) {
         document.getElementById('modalName').textContent = data.patientName;
-        document.getElementById('modalDoctor').textContent = data.doctorName;
-        
-        // Format date nicely
-        const parts = data.date.split('-');
-        const fixedDateObj = new Date(parts[0], parts[1] - 1, parts[2]);
-
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        document.getElementById('modalDate').textContent = fixedDateObj.toLocaleDateString('en-US', options);
-        
-        document.getElementById('modalTime').textContent = data.time;
+        document.getElementById('modalId').textContent = data.patientId;
+        document.getElementById('modalHospital').textContent = data.hospitalName;
+        document.getElementById('modalReport').textContent = data.reportName;
+        document.getElementById('modalReason').textContent = data.reportReason;
         
         modal.style.display = 'flex';
         // Add slight delay for animation
