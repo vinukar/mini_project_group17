@@ -69,6 +69,15 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="occupationSelect"><i class="fa-solid fa-graduation-cap"></i> Occupational Status</label>
+                        <select id="occupationSelect" required>
+                            <option value="general">General Public</option>
+                            <option value="university">University Student (50% Off)</option>
+                            <option value="school">School Student (50% Off)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
                         <label for="hospitalSelect"><i class="fa-regular fa-hospital"></i> Select Government Hospital</label>
                         <select id="hospitalSelect" required>
                             <option value="" disabled selected>Choose a hospital...</option>
@@ -89,6 +98,25 @@
                         <textarea id="reportReason" placeholder="Briefly describe why you need this report" rows="3" required></textarea>
                     </div>
 
+                    <div class="form-group">
+                        <label for="appointmentDate"><i class="fa-regular fa-calendar"></i> Select Date</label>
+                        <input type="date" id="appointmentDate" required>
+                    </div>
+
+                    <div class="form-group slots-group">
+                        <label><i class="fa-regular fa-clock"></i> Available Time Slots</label>
+                        <div id="timeSlots" class="time-slots-grid">
+                            <p class="placeholder-text">Please select a hospital and date first.</p>
+                            <!-- Populated by JS -->
+                        </div>
+                        <input type="hidden" id="selectedTimeSlot" required>
+                    </div>
+
+                    <div class="price-preview">
+                        <span>Total Estimated Cost: </span>
+                        <strong id="livePrice">LKR 0.00</strong>
+                    </div>
+
                     <button type="submit" class="btn btn-primary btn-block" id="submitBtn">
                         Submit Request
                     </button>
@@ -107,12 +135,14 @@
                         <div class="appointment-card">
                             <div class="app-header">
                                 <span class="patient-name" id="dispName">Name</span>
-                                <span class="app-status">Submitted</span>
+                                <span class="app-status">Paid — Token #<span id="dispToken">000</span></span>
                             </div>
                             <div class="app-details">
                                 <p><i class="fa-solid fa-id-card"></i> <span id="dispId">Patient ID</span></p>
                                 <p><i class="fa-regular fa-hospital"></i> <span id="dispHospital">Hospital</span></p>
                                 <p><i class="fa-solid fa-file-waveform"></i> <span id="dispReport">Report</span></p>
+                                <p><i class="fa-regular fa-calendar"></i> <span id="dispDate">Date</span></p>
+                                <p><i class="fa-regular fa-clock"></i> <span id="dispTime">Time</span></p>
                                 <p><i class="fa-solid fa-comment-medical"></i> <span id="dispReason">Reason</span></p>
                             </div>
                         </div>
@@ -131,12 +161,18 @@
                 <h2>Request Submitted!</h2>
             </div>
             <div class="modal-body">
-                <p>Your report request has been registered. Here are the details:</p>
+                <p>Your report request has been registered. Please present your token number at the hospital.</p>
+                <div class="token-display">
+                    <h3>Your Token Number</h3>
+                    <div class="token-number" id="modalToken">--</div>
+                </div>
                 <div class="appointment-receipt">
                     <p><strong>Patient:</strong> <span id="modalName"></span></p>
                     <p><strong>Patient ID:</strong> <span id="modalId"></span></p>
                     <p><strong>Hospital:</strong> <span id="modalHospital"></span></p>
                     <p><strong>Report:</strong> <span id="modalReport"></span></p>
+                    <p><strong>Date:</strong> <span id="modalDate"></span></p>
+                    <p><strong>Time:</strong> <span id="modalTime"></span></p>
                     <p><strong>Reason:</strong> <span id="modalReason"></span></p>
                 </div>
             </div>

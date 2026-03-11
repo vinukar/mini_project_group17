@@ -39,10 +39,21 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'r8', name: 'Urine Analysis', price: 1200 }
     ];
 
+    const baseTimeSlots = [
+        "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", 
+        "11:00 AM", "11:30 AM", "01:00 PM", "01:30 PM", 
+        "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM", "04:00 PM"
+    ];
+
     // DOM Elements
+    const occupationSelect = document.getElementById('occupationSelect');
     const hospitalSelect = document.getElementById('hospitalSelect');
     const reportTypeCheckboxes = document.getElementById('reportTypeCheckboxes');
     const selectedReportsInput = document.getElementById('selectedReports');
+    const appointmentDate = document.getElementById('appointmentDate');
+    const timeSlotsContainer = document.getElementById('timeSlots');
+    const selectedTimeSlotInput = document.getElementById('selectedTimeSlot');
+    const livePriceDisplay = document.getElementById('livePrice');
     const bookingForm = document.getElementById('booking-form');
     
     // Modal Elements
@@ -57,9 +68,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function init() {
         populateHospitals();
         populateReportTypes();
+        setMinDate();
         loadRecentBooking();
         
         // Event Listeners
+        occupationSelect.addEventListener('change', updateSelectedReports);
+        hospitalSelect.addEventListener('change', generateTimeSlots);
+        appointmentDate.addEventListener('change', generateTimeSlots);
         bookingForm.addEventListener('submit', handleBookingSubmit);
         
         // Modal events
@@ -101,6 +116,89 @@ document.addEventListener('DOMContentLoaded', () => {
         const selected = Array.from(reportTypeCheckboxes.querySelectorAll('input:checked'))
                               .map(cb => cb.value);
         selectedReportsInput.value = selected.join(',');
+        
+        // Calculate live price
+        let total = 0;
+        const selectedReportsData = reportTypes.filter(r => selected.includes(r.id));
+        total = selectedReportsData.reduce((sum, r) => sum + r.price, 0);
+        
+        // Apply discount
+        const occupation = occupationSelect.value;
+        if (occupation === 'university' || occupation === 'school') {
+            total = total * 0.5; // 50% discount
+        }
+        
+        livePriceDisplay.textContent = `LKR ${total.toFixed(2)}`;
+        
+        generateTimeSlots(); // Selected reports change the time slots available
+    }
+
+    // Set minimum date to today
+    function setMinDate() {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        let mm = today.getMonth() + 1; // Months start at 0
+        let dd = today.getDate();
+
+        if (dd < 10) dd = '0' + dd;
+        if (mm < 10) mm = '0' + mm;
+
+        const formattedToday = yyyy + '-' + mm + '-' + dd;
+        appointmentDate.setAttribute('min', formattedToday);
+    }
+
+    // Generate time slots based on hospital, date and report selection
+    function generateTimeSlots() {
+        const hospitalId = hospitalSelect.value;
+        const date = appointmentDate.value;
+        const reports = selectedReportsInput.value;
+        
+        selectedTimeSlotInput.value = ''; // Reset selection
+
+        if (!hospitalId || !date || !reports) {
+            timeSlotsContainer.innerHTML = '<p class="placeholder-text">Please select a hospital, date, and at least one report first.</p>';
+            return;
+        }
+
+        timeSlotsContainer.innerHTML = ''; // Clear container
+        
+        // Simple mock: disable some random slots based on string hash of hospital, date, and reports to make it look realistic but deterministic
+        const seed = hospitalId + date + reports;
+        let hash = 0;
+        for (let i = 0; i < seed.length; i++) {
+            hash = ((hash << 5) - hash) + seed.charCodeAt(i);
+            hash |= 0;
+        }
+
+        baseTimeSlots.forEach((slot, index) => {
+            const slotElement = document.createElement('div');
+            slotElement.className = 'time-slot';
+            slotElement.textContent = slot;
+            
+            // Randomly make some slots unavailable (mock logic)
+            // Use bitwise logic with hash to ensure consistent "unavailable" slots across re-renders
+            const isUnavailable = (Math.abs(hash * (index + 1)) % 10) > 6; 
+            
+            if (isUnavailable) {
+                slotElement.classList.add('unavailable');
+            } else {
+                slotElement.addEventListener('click', () => selectTimeSlot(slotElement, slot));
+            }
+            
+            timeSlotsContainer.appendChild(slotElement);
+        });
+    }
+
+    function selectTimeSlot(element, time) {
+        // Remove 'selected' from all
+        const allSlots = document.querySelectorAll('.time-slot');
+        allSlots.forEach(slot => slot.classList.remove('selected'));
+        
+        // Add to clicked
+        element.classList.add('selected');
+        
+        // Update hidden input
+        selectedTimeSlotInput.value = time;
     }
 
     function handleBookingSubmit(e) {
@@ -111,6 +209,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const hospitalId = hospitalSelect.value;
         const selectedReportIds = selectedReportsInput.value;
         const reportReason = document.getElementById('reportReason').value.trim();
+        const date = appointmentDate.value;
+        const time = selectedTimeSlotInput.value;
         
         if (!hospitalId) {
             alert('Please select a hospital.');
@@ -122,13 +222,25 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
+        if (!time) {
+            alert('Please select an available time slot.');
+            return;
+        }
+        
         const selectedHospital = hospitals.find(h => h.id === hospitalId);
         
         // Map the IDs to names and prices for the payment gateway
         const selectedIdsArray = selectedReportIds.split(',');
         const selectedReportsData = reportTypes.filter(r => selectedIdsArray.includes(r.id));
         const reportNames = selectedReportsData.map(r => r.name).join(', ');
-        const totalPrice = selectedReportsData.reduce((sum, r) => sum + r.price, 0);
+        
+        let totalPrice = selectedReportsData.reduce((sum, r) => sum + r.price, 0);
+        const occupation = occupationSelect.value;
+        const isStudent = (occupation === 'university' || occupation === 'school');
+        
+        if (isStudent) {
+            totalPrice = totalPrice * 0.5;
+        }
         
         // Use a consistent fake 'request ID' mimicking the date
         const requestData = {
@@ -138,6 +250,8 @@ document.addEventListener('DOMContentLoaded', () => {
             hospitalName: selectedHospital.name,
             reportName: reportNames, // display all names
             totalPrice: totalPrice, // save total price
+            date: date,
+            time: time,
             reportReason: reportReason,
             status: 'Submitted'
         };
@@ -175,6 +289,15 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('dispId').textContent = data.patientId;
         document.getElementById('dispHospital').textContent = data.hospitalName;
         document.getElementById('dispReport').textContent = data.reportName;
+        
+        // Format date nicely
+        const parts = data.date.split('-');
+        const fixedDateObj = new Date(parts[0], parts[1] - 1, parts[2]);
+
+        const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+        document.getElementById('dispDate').textContent = fixedDateObj.toLocaleDateString('en-US', options);
+        document.getElementById('dispTime').textContent = data.time;
+        
         document.getElementById('dispReason').textContent = data.reportReason;
     }
 
@@ -183,6 +306,15 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modalId').textContent = data.patientId;
         document.getElementById('modalHospital').textContent = data.hospitalName;
         document.getElementById('modalReport').textContent = data.reportName;
+        
+        // Format date nicely
+        const parts = data.date.split('-');
+        const fixedDateObj = new Date(parts[0], parts[1] - 1, parts[2]);
+
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('modalDate').textContent = fixedDateObj.toLocaleDateString('en-US', options);
+        document.getElementById('modalTime').textContent = data.time;
+        
         document.getElementById('modalReason').textContent = data.reportReason;
         
         modal.style.display = 'flex';
