@@ -77,11 +77,11 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="reportTypeSelect"><i class="fa-solid fa-file-waveform"></i> Select Report Type</label>
-                        <select id="reportTypeSelect" required>
-                            <option value="" disabled selected>Choose a report type...</option>
+                        <label><i class="fa-solid fa-file-waveform"></i> Select Report Types</label>
+                        <div id="reportTypeCheckboxes" class="checkbox-grid">
                             <!-- Populated by JS -->
-                        </select>
+                        </div>
+                        <input type="hidden" id="selectedReports" required>
                     </div>
 
                     <div class="form-group">

@@ -29,19 +29,20 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     const reportTypes = [
-        { id: 'r1', name: 'Full Blood Count (FBC)' },
-        { id: 'r2', name: 'Lipid Profile' },
-        { id: 'r3', name: 'Liver Function Test (LFT)' },
-        { id: 'r4', name: 'Thyroid Function Test' },
-        { id: 'r5', name: 'X-Ray (Chest)' },
-        { id: 'r6', name: 'MRI Scan' },
-        { id: 'r7', name: 'CT Scan' },
-        { id: 'r8', name: 'Urine Analysis' }
+        { id: 'r1', name: 'Full Blood Count (FBC)', price: 1500 },
+        { id: 'r2', name: 'Lipid Profile', price: 3000 },
+        { id: 'r3', name: 'Liver Function Test (LFT)', price: 2800 },
+        { id: 'r4', name: 'Thyroid Function Test', price: 2800 },
+        { id: 'r5', name: 'X-Ray (Chest)', price: 2500 },
+        { id: 'r6', name: 'MRI Scan', price: 8500 },
+        { id: 'r7', name: 'CT Scan', price: 6500 },
+        { id: 'r8', name: 'Urine Analysis', price: 1200 }
     ];
 
     // DOM Elements
     const hospitalSelect = document.getElementById('hospitalSelect');
-    const reportTypeSelect = document.getElementById('reportTypeSelect');
+    const reportTypeCheckboxes = document.getElementById('reportTypeCheckboxes');
+    const selectedReportsInput = document.getElementById('selectedReports');
     const bookingForm = document.getElementById('booking-form');
     
     // Modal Elements
@@ -80,11 +81,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function populateReportTypes() {
         reportTypes.forEach(report => {
-            const option = document.createElement('option');
-            option.value = report.id;
-            option.textContent = report.name;
-            reportTypeSelect.appendChild(option);
+            const label = document.createElement('label');
+            label.className = 'checkbox-label';
+            
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.value = report.id;
+            checkbox.dataset.name = report.name;
+            checkbox.dataset.price = report.price;
+            checkbox.addEventListener('change', updateSelectedReports);
+            
+            label.appendChild(checkbox);
+            label.appendChild(document.createTextNode(` ${report.name}`));
+            reportTypeCheckboxes.appendChild(label);
         });
+    }
+
+    function updateSelectedReports() {
+        const selected = Array.from(reportTypeCheckboxes.querySelectorAll('input:checked'))
+                              .map(cb => cb.value);
+        selectedReportsInput.value = selected.join(',');
     }
 
     function handleBookingSubmit(e) {
@@ -93,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const patientName = document.getElementById('patientName').value.trim();
         const patientId = document.getElementById('patientId').value.trim();
         const hospitalId = hospitalSelect.value;
-        const reportTypeId = reportTypeSelect.value;
+        const selectedReportIds = selectedReportsInput.value;
         const reportReason = document.getElementById('reportReason').value.trim();
         
         if (!hospitalId) {
@@ -101,13 +117,18 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (!reportTypeId) {
-            alert('Please select a report type.');
+        if (!selectedReportIds) {
+            alert('Please select at least one report type.');
             return;
         }
         
         const selectedHospital = hospitals.find(h => h.id === hospitalId);
-        const selectedReport = reportTypes.find(r => r.id === reportTypeId);
+        
+        // Map the IDs to names and prices for the payment gateway
+        const selectedIdsArray = selectedReportIds.split(',');
+        const selectedReportsData = reportTypes.filter(r => selectedIdsArray.includes(r.id));
+        const reportNames = selectedReportsData.map(r => r.name).join(', ');
+        const totalPrice = selectedReportsData.reduce((sum, r) => sum + r.price, 0);
         
         // Use a consistent fake 'request ID' mimicking the date
         const requestData = {
@@ -115,7 +136,8 @@ document.addEventListener('DOMContentLoaded', () => {
             patientName: patientName,
             patientId: patientId,
             hospitalName: selectedHospital.name,
-            reportName: selectedReport.name,
+            reportName: reportNames, // display all names
+            totalPrice: totalPrice, // save total price
             reportReason: reportReason,
             status: 'Submitted'
         };
