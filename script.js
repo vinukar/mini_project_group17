@@ -242,9 +242,13 @@ document.addEventListener('DOMContentLoaded', () => {
             totalPrice = totalPrice * 0.5;
         }
         
+        // Generate a 4-digit token
+        const tokenNumber = Math.floor(1000 + Math.random() * 9000);
+
         // Use a consistent fake 'request ID' mimicking the date
         const requestData = {
             id: Date.now().toString(),
+            token: tokenNumber,
             patientName: patientName,
             patientId: patientId,
             hospitalName: selectedHospital.name,
@@ -286,6 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
         recentBookingCard.style.display = 'block';
         
         document.getElementById('dispName').textContent = data.patientName;
+        document.getElementById('dispToken').textContent = data.token;
         document.getElementById('dispId').textContent = data.patientId;
         document.getElementById('dispHospital').textContent = data.hospitalName;
         document.getElementById('dispReport').textContent = data.reportName;
@@ -302,6 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showModal(data) {
+        document.getElementById('modalToken').textContent = data.token;
         document.getElementById('modalName').textContent = data.patientName;
         document.getElementById('modalId').textContent = data.patientId;
         document.getElementById('modalHospital').textContent = data.hospitalName;
