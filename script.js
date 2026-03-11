@@ -123,16 +123,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Save to LocalStorage
         saveBooking(requestData);
         
-        // Update Recent Booking UI
-        displayRecentBooking(requestData);
-        
-        // Show Modal
-        showModal(requestData);
-        
-        // Reset Form
-        bookingForm.reset();
-        timeSlotsContainer.innerHTML = '<p class="placeholder-text">Please select a doctor and date first.</p>';
-        selectedTimeSlotInput.value = '';
+        // Redirect to payment page
+        window.location.href = 'payment.html';
     }
 
     function saveBooking(data) {
@@ -145,8 +137,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (savedData) {
             try {
                 const data = JSON.parse(savedData);
-                // Simple validation to ensure it's slightly recent (optional)
-                displayRecentBooking(data);
+                if (data.status === 'Paid') {
+                    displayRecentBooking(data);
+                }
             } catch (e) {
                 console.error('Error parsing booking data', e);
             }
