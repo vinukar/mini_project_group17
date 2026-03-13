@@ -70,6 +70,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Wait 1.5 seconds to feel realistic, then update status and show modal
         setTimeout(() => {
+            // Populate Modal Data
+            const now = new Date();
+            const paidDateTime = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+
             // Update status in storage
             requestData.status = 'Paid';
             localStorage.setItem('vitacare_latest_booking', JSON.stringify(requestData));
@@ -83,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 time: requestData.time
             });
             localStorage.setItem('vitacare_booked_slots', JSON.stringify(bookedSlots));
-
+ 
             // Store in full history for the Log page
             const historyStr = localStorage.getItem('vitacare_history') || '[]';
             const history = JSON.parse(historyStr);
@@ -95,10 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Show Success Modal
             paymentModal.style.display = 'flex';
-            
-            // Populate Modal Data
-            const now = new Date();
-            const paidDateTime = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
             
             document.getElementById('modalToken').textContent = requestData.token;
             document.getElementById('modalName').textContent = requestData.patientName;
