@@ -23,9 +23,18 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('sum-patient').textContent = requestData.patientName;
     document.getElementById('sum-hospital').textContent = requestData.hospitalName;
     document.getElementById('sum-report').textContent = requestData.reportName;
+    document.getElementById('sum-reserved-date').textContent = requestData.date;
+    document.getElementById('sum-reserved-time').textContent = requestData.time;
     
     // Display total price pulled from the form selection (includes user discounts)
     document.getElementById('sum-price').textContent = `LKR ${requestData.totalPrice.toFixed(2)}`;
+    
+    // Display discount if available
+    if (requestData.originalPrice > requestData.totalPrice) {
+        document.getElementById('discount-section').style.display = 'block';
+        document.getElementById('sum-original-price').textContent = `LKR ${requestData.originalPrice.toFixed(2)}`;
+        document.getElementById('sum-discount-amount').textContent = `- LKR ${(requestData.originalPrice - requestData.totalPrice).toFixed(2)}`;
+    }
     
     // Add input formatting for realistic UX
     document.getElementById('cardName').addEventListener('input', function(e) {
@@ -65,16 +74,41 @@ document.addEventListener('DOMContentLoaded', () => {
             requestData.status = 'Paid';
             localStorage.setItem('vitacare_latest_booking', JSON.stringify(requestData));
             
+            // Store in global booked slots list to disable it for others
+            const bookedSlotsStr = localStorage.getItem('vitacare_booked_slots') || '[]';
+            const bookedSlots = JSON.parse(bookedSlotsStr);
+            bookedSlots.push({
+                hospital: requestData.hospitalName,
+                date: requestData.date,
+                time: requestData.time
+            });
+            localStorage.setItem('vitacare_booked_slots', JSON.stringify(bookedSlots));
+            
             // Show Success Modal
             paymentModal.style.display = 'flex';
             
             // Populate Modal Data
+            const now = new Date();
+            const paidDateTime = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+            
             document.getElementById('modalToken').textContent = requestData.token;
             document.getElementById('modalName').textContent = requestData.patientName;
             document.getElementById('modalId').textContent = requestData.patientId;
             document.getElementById('modalHospital').textContent = requestData.hospitalName;
             document.getElementById('modalReport').textContent = requestData.reportName;
+            document.getElementById('modalReservedDate').textContent = requestData.date;
+            document.getElementById('modalReservedTime').textContent = requestData.time;
+            document.getElementById('modalPaidTime').textContent = paidDateTime;
             document.getElementById('modalPrice').textContent = `LKR ${requestData.totalPrice.toFixed(2)}`;
+            
+            // Handle discount info in modal
+            if (requestData.originalPrice > requestData.totalPrice) {
+                document.getElementById('modal-discount-info').style.display = 'block';
+                document.getElementById('modalOriginalPrice').textContent = `LKR ${requestData.originalPrice.toFixed(2)}`;
+                document.getElementById('modalDiscountAmount').textContent = `- LKR ${(requestData.originalPrice - requestData.totalPrice).toFixed(2)}`;
+            } else {
+                document.getElementById('modal-discount-info').style.display = 'none';
+            }
             
             // Slight delay for animation parsing
             setTimeout(() => {

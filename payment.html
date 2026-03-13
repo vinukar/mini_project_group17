@@ -150,6 +150,24 @@
                             <span style="color: var(--text-muted);">Report Type</span>
                             <strong id="sum-report">-</strong>
                         </div>
+                        <div class="summary-item">
+                            <span style="color: var(--text-muted);">Reserved Date</span>
+                            <strong id="sum-reserved-date">-</strong>
+                        </div>
+                        <div class="summary-item">
+                            <span style="color: var(--text-muted);">Reserved Time</span>
+                            <strong id="sum-reserved-time">-</strong>
+                        </div>
+                        <div id="discount-section" style="display: none;">
+                            <div class="summary-item">
+                                <span style="color: var(--text-muted);">Original Price</span>
+                                <strong id="sum-original-price" style="text-decoration: line-through; color: var(--danger);">-</strong>
+                            </div>
+                            <div class="summary-item">
+                                <span style="color: var(--text-muted);">Discount Applied</span>
+                                <strong id="sum-discount-amount" style="color: var(--success);">-</strong>
+                            </div>
+                        </div>
                         <div class="summary-total">
                             <span>Total Amount</span>
                             <span id="sum-price">LKR 0.00</span>
@@ -178,7 +196,14 @@
                     <p><strong>Patient ID:</strong> <span id="modalId"></span></p>
                     <p><strong>Hospital:</strong> <span id="modalHospital"></span></p>
                     <p><strong>Report:</strong> <span id="modalReport"></span></p>
+                    <p><strong>Reserved Date:</strong> <span id="modalReservedDate"></span></p>
+                    <p><strong>Reserved Time:</strong> <span id="modalReservedTime"></span></p>
+                    <div id="modal-discount-info" style="display: none;">
+                        <p><strong>Original Price:</strong> <span id="modalOriginalPrice" style="text-decoration: line-through;"></span></p>
+                        <p><strong>Discount:</strong> <span id="modalDiscountAmount" style="color: var(--success);"></span></p>
+                    </div>
                     <p><strong>Amount Paid:</strong> <span id="modalPrice"></span></p>
+                    <p><strong>Paid Date & Time:</strong> <span id="modalPaidTime"></span></p>
                 </div>
             </div>
             <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">

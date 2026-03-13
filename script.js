@@ -295,6 +295,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!hospitalSelect || !appointmentDate || !selectedReportsInput || !timeSlotsContainer) return;
 
         const hospitalId = hospitalSelect.value;
+        const selectedHospital = hospitals.find(h => h.id === hospitalId);
+        const hospitalName = selectedHospital ? selectedHospital.name : '';
         const date = appointmentDate.value;
         const reports = selectedReportsInput.value;
         
@@ -306,6 +308,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         timeSlotsContainer.innerHTML = ''; // Clear container
+        
+        // Fetch global booked slots
+        const bookedSlotsStr = localStorage.getItem('vitacare_booked_slots') || '[]';
+        const bookedSlots = JSON.parse(bookedSlotsStr);
         
         // Simple mock: disable some random slots based on string hash of hospital, date, and reports to make it look realistic but deterministic
         const seed = hospitalId + date + reports;
@@ -320,12 +326,22 @@ document.addEventListener('DOMContentLoaded', () => {
             slotElement.className = 'time-slot';
             slotElement.textContent = slot;
             
+            // Check if this slot is already booked for this hospital and date
+            const isActuallyBooked = bookedSlots.some(bs => 
+                bs.hospital === hospitalName && 
+                bs.date === date && 
+                bs.time === slot
+            );
+            
             // Randomly make some slots unavailable (mock logic)
             // Use bitwise logic with hash to ensure consistent "unavailable" slots across re-renders
-            const isUnavailable = (Math.abs(hash * (index + 1)) % 10) > 6; 
+            const isRandomlyUnavailable = (Math.abs(hash * (index + 1)) % 10) > 7; 
             
-            if (isUnavailable) {
+            if (isActuallyBooked || isRandomlyUnavailable) {
                 slotElement.classList.add('unavailable');
+                if (isActuallyBooked) {
+                    slotElement.title = "This slot is already reserved";
+                }
             } else {
                 slotElement.addEventListener('click', () => selectTimeSlot(slotElement, slot));
             }
@@ -379,12 +395,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedReportsData = reportTypes.filter(r => selectedIdsArray.includes(r.id));
         const reportNames = selectedReportsData.map(r => r.name).join(', ');
         
-        let totalPrice = selectedReportsData.reduce((sum, r) => sum + r.price, 0);
+        let originalPrice = selectedReportsData.reduce((sum, r) => sum + r.price, 0);
+        let totalPrice = originalPrice;
         const occupation = occupationSelect.value;
         const isStudent = (occupation === 'university' || occupation === 'school');
         
         if (isStudent) {
-            totalPrice = totalPrice * 0.5;
+            totalPrice = originalPrice * 0.5;
         }
         
         // Generate a 4-digit token
@@ -398,6 +415,7 @@ document.addEventListener('DOMContentLoaded', () => {
             patientId: patientId,
             hospitalName: selectedHospital.name,
             reportName: reportNames, // display all names
+            originalPrice: originalPrice,
             totalPrice: totalPrice, // save total price
             date: date,
             time: time,
