@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitaCare - Secure Payment</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .payment-section {
+            padding: 120px 0 5rem 0;
+            min-height: 90vh;
+        }
+        .payment-wrapper {
+            display: grid;
+            grid-template-columns: 3fr 2fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .payment-form-container, .order-summary {
+            padding: 2.5rem;
+        }
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px dashed var(--border);
+        }
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-top: 1.5rem;
+            color: var(--primary);
+        }
+        .card-icons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            color: var(--border);
+        }
+        .card-icons i.active {
+            color: var(--primary);
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        @media (max-width: 768px) {
+            .payment-wrapper {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .modal-content, .modal-content * {
+                visibility: visible;
+            }
+            .modal-content {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                transform: scale(1) !important;
+                box-shadow: none;
+                border: none;
+            }
+            #modalCloseBtn, #printBtn, .close-btn {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="logo">
+                <i class="fa-solid fa-heart-pulse"></i>
+                <span>VitaCare</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Cancel Request</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="payment-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Complete Your Payment</h2>
+                <p>Securely pay for your medical report request online.</p>
+            </div>
+            
+            <div class="payment-wrapper">
+                <div class="payment-form-container glass-panel">
+                    <h3>Payment Details</h3>
+                    <div class="card-icons">
+                        <i class="fa-brands fa-cc-visa active"></i>
+                        <i class="fa-brands fa-cc-mastercard active"></i>
+                        <i class="fa-brands fa-cc-amex"></i>
+                    </div>
+                    
+                    <form id="payment-form">
+                        <div class="form-group">
+                            <label for="cardName"><i class="fa-regular fa-user"></i> Name on Card</label>
+                            <input type="text" id="cardName" placeholder="e.g. John Doe" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="cardNumber"><i class="fa-regular fa-credit-card"></i> Card Number</label>
+                            <input type="text" id="cardNumber" placeholder="0000 0000 0000 0000" maxlength="19" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="expiry"><i class="fa-regular fa-calendar"></i> Expiry Date</label>
+                                <input type="text" id="expiry" placeholder="MM/YY" maxlength="5" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="cvv"><i class="fa-solid fa-lock"></i> CVV</label>
+                                <input type="text" id="cvv" placeholder="123" maxlength="3" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block" id="payBtn" style="margin-top: 1rem;">
+                            Pay Now <i class="fa-solid fa-lock"></i>
+                        </button>
+                    </form>
+                </div>
+                
+                <div class="order-summary glass-panel">
+                    <h3>Request Summary</h3>
+                    <div style="margin-top: 1.5rem;">
+                        <div class="summary-item">
+                            <span style="color: var(--text-muted);">Patient Name</span>
+                            <strong id="sum-patient">-</strong>
+                        </div>
+                        <div class="summary-item">
+                            <span style="color: var(--text-muted);">Hospital</span>
+                            <strong id="sum-hospital">-</strong>
+                        </div>
+                        <div class="summary-item">
+                            <span style="color: var(--text-muted);">Report Type</span>
+                            <strong id="sum-report">-</strong>
+                        </div>
+                        <div class="summary-total">
+                            <span>Total Amount</span>
+                            <span id="sum-price">LKR 0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Success Modal -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <div class="success-icon"><i class="fa-solid fa-check"></i></div>
+                <h2>Payment Successful!</h2>
+            </div>
+            <div class="modal-body">
+                <p>Your payment has been processed securely. Your report request is now complete and validated.</p>
+                <div class="token-display" style="margin-top: 2rem;">
+                    <h3>Your Token Number</h3>
+                    <div class="token-number" id="modalToken">--</div>
+                </div>
+                <div class="appointment-receipt">
+                    <p><strong>Patient:</strong> <span id="modalName"></span></p>
+                    <p><strong>Patient ID:</strong> <span id="modalId"></span></p>
+                    <p><strong>Hospital:</strong> <span id="modalHospital"></span></p>
+                    <p><strong>Report:</strong> <span id="modalReport"></span></p>
+                    <p><strong>Amount Paid:</strong> <span id="modalPrice"></span></p>
+                </div>
+            </div>
+            <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                <button class="btn btn-secondary btn-block" id="printBtn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
+                    <i class="fa-solid fa-print"></i> Print
+                </button>
+                <button class="btn btn-primary btn-block" id="modalCloseBtn">Return to Dashboard</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container footer-container">
+            <div class="logo">
+                <i class="fa-solid fa-heart-pulse"></i>
+                <span>VitaCare</span>
+            </div>
+            <p>&copy; 2026 VitaCare Medical. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="payment.js"></script>
+</body>
+</html>
