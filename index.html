@@ -78,11 +78,19 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="hospitalSelect"><i class="fa-regular fa-hospital"></i> Select Government Hospital</label>
-                        <input type="text" id="hospitalSearch" class="select-search-input" placeholder="Search hospital name...">
-                        <select id="hospitalSelect" required>
+                        <label for="hospitalSearch"><i class="fa-regular fa-hospital"></i> Select Government Hospital</label>
+                        <div class="searchable-select-container" id="hospitalSelectWrapper">
+                            <div class="search-input-wrapper">
+                                <input type="text" id="hospitalSearch" class="search-input" placeholder="Search and select hospital..." autocomplete="off">
+                                <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+                            </div>
+                            <div id="hospitalDropdown" class="custom-dropdown-list">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                        <select id="hospitalSelect" required style="display: none;">
                             <option value="" disabled selected>Choose a hospital...</option>
-                            <!-- Populated by JS -->
+                            <!-- Populated by JS for compatibility -->
                         </select>
                     </div>
 

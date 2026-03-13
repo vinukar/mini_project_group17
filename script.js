@@ -50,7 +50,17 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'h47', name: 'Base Hospital - Embilipitiya' },
         { id: 'h48', name: 'Base Hospital - Karawanella' },
         { id: 'h49', name: 'Base Hospital - Mahiyanganaya' },
-        { id: 'h50', name: 'Base Hospital - Welikanda' }
+        { id: 'h50', name: 'Base Hospital - Welikanda' },
+        { id: 'h51', name: 'General Hospital - Chilaw' },
+        { id: 'h52', name: 'General Hospital - Matale' },
+        { id: 'h33', name: 'General Hospital - Polonnaruwa' },
+        { id: 'h54', name: 'General Hospital - Ampara' },
+        { id: 'h55', name: 'General Hospital - Hambantota' },
+        { id: 'h56', name: 'Base Hospital - Dikoya' },
+        { id: 'h57', name: 'Base Hospital - Gampola' },
+        { id: 'h58', name: 'Base Hospital - Kantale' },
+        { id: 'h59', name: 'Base Hospital - Medirigiriya' },
+        { id: 'h60', name: 'Base Hospital - Rikillagaskada' }
     ];
 
     const reportTypes = [
@@ -91,6 +101,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Recent Booking Card Elements
     const recentBookingCard = document.getElementById('recentBookingCard');
+    const hospitalSelectWrapper = document.getElementById('hospitalSelectWrapper');
+    const hospitalDropdown = document.getElementById('hospitalDropdown');
 
     // Initialize the app
     function init() {
@@ -106,11 +118,26 @@ document.addEventListener('DOMContentLoaded', () => {
         patientNameInput.addEventListener('input', function() {
             this.value = this.value.replace(/[0-9]/g, '');
         });
-        occupationSelect.addEventListener('change', updateSelectedReports);
-        hospitalSelect.addEventListener('change', generateTimeSlots);
+
+        // Searchable Select Logic
+        hospitalSearch.addEventListener('focus', () => {
+            hospitalSelectWrapper.classList.add('active');
+            populateHospitals(hospitalSearch.value);
+        });
+
         hospitalSearch.addEventListener('input', (e) => {
             populateHospitals(e.target.value);
         });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!hospitalSelectWrapper.contains(e.target)) {
+                hospitalSelectWrapper.classList.remove('active');
+            }
+        });
+
+        occupationSelect.addEventListener('change', updateSelectedReports);
+        hospitalSelect.addEventListener('change', generateTimeSlots);
         appointmentDate.addEventListener('change', generateTimeSlots);
         bookingForm.addEventListener('submit', handleBookingSubmit);
         
@@ -124,31 +151,50 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function populateHospitals(filter = '') {
         const searchTerm = filter.toLowerCase();
-        
-        // Save current selection if possible
-        const currentSelection = hospitalSelect.value;
-        
-        // Clear except first option
-        hospitalSelect.innerHTML = '<option value="" disabled selected>Choose a hospital...</option>';
+        hospitalDropdown.innerHTML = '';
         
         const filtered = hospitals.filter(hosp => 
             hosp.name.toLowerCase().includes(searchTerm)
         );
 
+        if (filtered.length === 0) {
+            hospitalDropdown.innerHTML = '<div class="no-results">No hospitals found</div>';
+            return;
+        }
+
         filtered.forEach(hosp => {
+            const div = document.createElement('div');
+            div.className = 'dropdown-option';
+            if (hosp.id === hospitalSelect.value) div.classList.add('selected');
+            div.textContent = hosp.name;
+            
+            div.addEventListener('click', () => {
+                hospitalSearch.value = hosp.name;
+                hospitalSelect.value = hosp.id;
+                
+                // Trigger change event for time slots
+                hospitalSelect.dispatchEvent(new Event('change'));
+                
+                hospitalSelectWrapper.classList.remove('active');
+                
+                // Update selected class
+                document.querySelectorAll('.dropdown-option').forEach(opt => opt.classList.remove('selected'));
+                div.classList.add('selected');
+            });
+            
+            hospitalDropdown.appendChild(div);
+        });
+
+        // Also update standard select for compatibility (optional but good for form validation)
+        const currentSelection = hospitalSelect.value;
+        hospitalSelect.innerHTML = '<option value="" disabled selected>Choose a hospital...</option>';
+        hospitals.forEach(hosp => {
             const option = document.createElement('option');
             option.value = hosp.id;
             option.textContent = hosp.name;
             if (hosp.id === currentSelection) option.selected = true;
             hospitalSelect.appendChild(option);
         });
-
-        // If filtering and current selection is no longer available, reset selection
-        if (filter && !filtered.find(h => h.id === currentSelection)) {
-            // keep default
-        } else if (currentSelection) {
-            hospitalSelect.value = currentSelection;
-        }
     }
 
     function populateReportTypes() {
