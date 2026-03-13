@@ -910,3 +910,57 @@ footer {
         opacity: 0;
     }
 }
+
+/* Sidebar Stats */
+.sidebar-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.stat-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary);
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* Floating Icons Background */
+.floating-icons-bg {
+    position: relative;
+    height: 100px;
+    margin-top: 1rem;
+    opacity: 0.15;
+    pointer-events: none;
+}
+
+.floating-icons-bg i {
+    position: absolute;
+    font-size: 2rem;
+    color: var(--secondary);
+}
+
+.icon-fade-1 { top: 20%; left: 10%; animation: floatIcon 4s ease-in-out infinite; }
+.icon-fade-2 { top: 10%; left: 45%; animation: floatIcon 5s ease-in-out infinite 1s; }
+.icon-fade-3 { top: 25%; right: 10%; animation: floatIcon 6s ease-in-out infinite 0.5s; }
+
+@keyframes floatIcon {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
