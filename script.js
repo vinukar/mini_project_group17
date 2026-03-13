@@ -106,50 +106,58 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize the app
     function init() {
-        populateHospitals();
-        populateReportTypes();
-        setMinDate();
+        if (hospitalSelect) populateHospitals();
+        if (reportTypeCheckboxes) populateReportTypes();
+        if (appointmentDate) setMinDate();
         loadRecentBooking();
         
         // Event Listeners
-        patientIdInput.addEventListener('input', function() {
-            this.value = this.value.toUpperCase().replace(/[^0-9VX]/g, '');
-        });
-        patientNameInput.addEventListener('input', function() {
-            this.value = this.value.replace(/[0-9]/g, '');
-        });
+        if (patientIdInput) {
+            patientIdInput.addEventListener('input', function() {
+                this.value = this.value.toUpperCase().replace(/[^0-9VX]/g, '');
+            });
+        }
+        if (patientNameInput) {
+            patientNameInput.addEventListener('input', function() {
+                this.value = this.value.replace(/[0-9]/g, '');
+            });
+        }
 
         // Searchable Select Logic
-        hospitalSearch.addEventListener('focus', () => {
-            hospitalSelectWrapper.classList.add('active');
-            populateHospitals(hospitalSearch.value);
-        });
+        if (hospitalSearch && hospitalSelectWrapper) {
+            hospitalSearch.addEventListener('focus', () => {
+                hospitalSelectWrapper.classList.add('active');
+                populateHospitals(hospitalSearch.value);
+            });
 
-        hospitalSearch.addEventListener('input', (e) => {
-            populateHospitals(e.target.value);
-        });
+            hospitalSearch.addEventListener('input', (e) => {
+                populateHospitals(e.target.value);
+            });
 
-        // Close dropdown when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!hospitalSelectWrapper.contains(e.target)) {
-                hospitalSelectWrapper.classList.remove('active');
-            }
-        });
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!hospitalSelectWrapper.contains(e.target)) {
+                    hospitalSelectWrapper.classList.remove('active');
+                }
+            });
+        }
 
-        occupationSelect.addEventListener('change', updateSelectedReports);
-        hospitalSelect.addEventListener('change', generateTimeSlots);
-        appointmentDate.addEventListener('change', generateTimeSlots);
-        bookingForm.addEventListener('submit', handleBookingSubmit);
+        if (occupationSelect) occupationSelect.addEventListener('change', updateSelectedReports);
+        if (hospitalSelect) hospitalSelect.addEventListener('change', generateTimeSlots);
+        if (appointmentDate) appointmentDate.addEventListener('change', generateTimeSlots);
+        if (bookingForm) bookingForm.addEventListener('submit', handleBookingSubmit);
         
         // Modal events
-        closeBtn.addEventListener('click', closeModal);
-        modalCloseBtn.addEventListener('click', closeModal);
+        if (closeBtn) closeBtn.addEventListener('click', closeModal);
+        if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeModal);
         window.addEventListener('click', (e) => {
-            if (e.target === modal) closeModal();
+            if (modal && e.target === modal) closeModal();
         });
     }
 
     function populateHospitals(filter = '') {
+        if (!hospitalDropdown || !hospitalSelect) return;
+        
         const searchTerm = filter.toLowerCase();
         hospitalDropdown.innerHTML = '';
         
@@ -198,6 +206,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function populateReportTypes() {
+        if (!reportTypeCheckboxes) return;
+        reportTypeCheckboxes.innerHTML = '';
         reportTypes.forEach(report => {
             const label = document.createElement('label');
             label.className = 'checkbox-label';
@@ -216,6 +226,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateSelectedReports() {
+        if (!reportTypeCheckboxes || !selectedReportsInput || !livePriceDisplay) return;
+
         const selected = Array.from(reportTypeCheckboxes.querySelectorAll('input:checked'))
                               .map(cb => cb.value);
         selectedReportsInput.value = selected.join(',');
@@ -238,6 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Set minimum date to today
     function setMinDate() {
+        if (!appointmentDate) return;
         const today = new Date();
         const yyyy = today.getFullYear();
         let mm = today.getMonth() + 1; // Months start at 0
@@ -252,11 +265,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Generate time slots based on hospital, date and report selection
     function generateTimeSlots() {
+        if (!hospitalSelect || !appointmentDate || !selectedReportsInput || !timeSlotsContainer) return;
+
         const hospitalId = hospitalSelect.value;
         const date = appointmentDate.value;
         const reports = selectedReportsInput.value;
         
-        selectedTimeSlotInput.value = ''; // Reset selection
+        if (selectedTimeSlotInput) selectedTimeSlotInput.value = ''; // Reset selection
 
         if (!hospitalId || !date || !reports) {
             timeSlotsContainer.innerHTML = '<p class="placeholder-text">Please select a hospital, date, and at least one report first.</p>';
@@ -301,7 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
         element.classList.add('selected');
         
         // Update hidden input
-        selectedTimeSlotInput.value = time;
+        if (selectedTimeSlotInput) selectedTimeSlotInput.value = time;
     }
 
     function handleBookingSubmit(e) {
@@ -390,41 +405,43 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function displayRecentBooking(data) {
+        if (!recentBookingCard) return;
         recentBookingCard.style.display = 'block';
         
-        document.getElementById('dispName').textContent = data.patientName;
-        document.getElementById('dispToken').textContent = data.token;
-        document.getElementById('dispId').textContent = data.patientId;
-        document.getElementById('dispHospital').textContent = data.hospitalName;
-        document.getElementById('dispReport').textContent = data.reportName;
+        if (document.getElementById('dispName')) document.getElementById('dispName').textContent = data.patientName;
+        if (document.getElementById('dispToken')) document.getElementById('dispToken').textContent = data.token;
+        if (document.getElementById('dispId')) document.getElementById('dispId').textContent = data.patientId;
+        if (document.getElementById('dispHospital')) document.getElementById('dispHospital').textContent = data.hospitalName;
+        if (document.getElementById('dispReport')) document.getElementById('dispReport').textContent = data.reportName;
         
         // Format date nicely
         const parts = data.date.split('-');
         const fixedDateObj = new Date(parts[0], parts[1] - 1, parts[2]);
 
         const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
-        document.getElementById('dispDate').textContent = fixedDateObj.toLocaleDateString('en-US', options);
-        document.getElementById('dispTime').textContent = data.time;
+        if (document.getElementById('dispDate')) document.getElementById('dispDate').textContent = fixedDateObj.toLocaleDateString('en-US', options);
+        if (document.getElementById('dispTime')) document.getElementById('dispTime').textContent = data.time;
         
-        document.getElementById('dispReason').textContent = data.reportReason;
+        if (document.getElementById('dispReason')) document.getElementById('dispReason').textContent = data.reportReason;
     }
 
     function showModal(data) {
-        document.getElementById('modalToken').textContent = data.token;
-        document.getElementById('modalName').textContent = data.patientName;
-        document.getElementById('modalId').textContent = data.patientId;
-        document.getElementById('modalHospital').textContent = data.hospitalName;
-        document.getElementById('modalReport').textContent = data.reportName;
+        if (!modal) return;
+        if (document.getElementById('modalToken')) document.getElementById('modalToken').textContent = data.token;
+        if (document.getElementById('modalName')) document.getElementById('modalName').textContent = data.patientName;
+        if (document.getElementById('modalId')) document.getElementById('modalId').textContent = data.patientId;
+        if (document.getElementById('modalHospital')) document.getElementById('modalHospital').textContent = data.hospitalName;
+        if (document.getElementById('modalReport')) document.getElementById('modalReport').textContent = data.reportName;
         
         // Format date nicely
         const parts = data.date.split('-');
         const fixedDateObj = new Date(parts[0], parts[1] - 1, parts[2]);
 
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        document.getElementById('modalDate').textContent = fixedDateObj.toLocaleDateString('en-US', options);
-        document.getElementById('modalTime').textContent = data.time;
+        if (document.getElementById('modalDate')) document.getElementById('modalDate').textContent = fixedDateObj.toLocaleDateString('en-US', options);
+        if (document.getElementById('modalTime')) document.getElementById('modalTime').textContent = data.time;
         
-        document.getElementById('modalReason').textContent = data.reportReason;
+        if (document.getElementById('modalReason')) document.getElementById('modalReason').textContent = data.reportReason;
         
         modal.style.display = 'flex';
         // Add slight delay for animation
@@ -434,6 +451,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function closeModal() {
+        if (!modal) return;
         modal.classList.remove('show');
         setTimeout(() => {
             modal.style.display = 'none';
