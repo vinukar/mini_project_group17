@@ -83,6 +83,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 time: requestData.time
             });
             localStorage.setItem('vitacare_booked_slots', JSON.stringify(bookedSlots));
+
+            // Store in full history for the Log page
+            const historyStr = localStorage.getItem('vitacare_history') || '[]';
+            const history = JSON.parse(historyStr);
+            history.unshift({
+                ...requestData,
+                paidTime: paidDateTime
+            });
+            localStorage.setItem('vitacare_history', JSON.stringify(history));
             
             // Show Success Modal
             paymentModal.style.display = 'flex';
