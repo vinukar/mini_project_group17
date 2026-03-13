@@ -1,68 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Mock Data
-    const hospitals = [
-        { id: 'h1', name: 'National Hospital of Sri Lanka (NHSL), Colombo' },
-        { id: 'h2', name: 'Lady Ridgeway Hospital for Children, Colombo' },
-        { id: 'h3', name: 'Castle Street Hospital for Women' },
-        { id: 'h4', name: 'De Soysa Hospital for Women' },
-        { id: 'h5', name: 'National Cancer Institute (Apeksha Hospital), Maharagama' },
-        { id: 'h6', name: 'Eye Hospital, Colombo' },
-        { id: 'h7', name: 'Teaching Hospital Colombo South (Kalubowila)' },
-        { id: 'h8', name: 'Infectious Disease Hospital (IDH), Angoda' },
-        { id: 'h9', name: 'National Hospital (Teaching), Kandy' },
-        { id: 'h10', name: 'Sirimavo Bandaranaike Specialized Children Hospital, Peradeniya' },
-        { id: 'h11', name: 'General Hospital (Teaching), Peradeniya' },
-        { id: 'h12', name: 'Teaching Hospital Karapitiya, Galle' },
-        { id: 'h13', name: 'Anuradhapura Teaching Hospital' },
-        { id: 'h14', name: 'Jaffna Teaching Hospital' },
-        { id: 'h15', name: 'Batticaloa Teaching Hospital' },
-        { id: 'h16', name: 'Teaching Hospital - Kurunegala' },
-        { id: 'h17', name: 'Ratnapura Teaching Hospital' },
-        { id: 'h18', name: 'Provincial General Hospital, Badulla' },
-        { id: 'h19', name: 'District General Hospital, Gampaha' },
-        { id: 'h20', name: 'District General Hospital, Negombo' },
-        { id: 'h21', name: 'District General Hospital, Polonnaruwa' },
-        { id: 'h22', name: 'District General Hospital, Matale' },
-        { id: 'h23', name: 'Ampara General Hospital' },
-        { id: 'h24', name: 'Hambantota District General Hospital' },
-        { id: 'h25', name: 'Chilaw District General Hospital' },
-        { id: 'h26', name: 'Teaching Hospital - Ragama (North Colombo)' },
-        { id: 'h27', name: 'General Hospital - Kalutara' },
-        { id: 'h28', name: 'General Hospital - Matara' },
-        { id: 'h29', name: 'General Hospital - Nuwara Eliya' },
-        { id: 'h30', name: 'General Hospital - Kegalle' },
-        { id: 'h31', name: 'General Hospital - Vavuniya' },
-        { id: 'h32', name: 'General Hospital - Mannar' },
-        { id: 'h33', name: 'General Hospital - Mullaitivu' },
-        { id: 'h34', name: 'General Hospital - Kilinochchi' },
-        { id: 'h35', name: 'General Hospital - Trincomalee' },
-        { id: 'h36', name: 'District General Hospital - Moneragala' },
-        { id: 'h37', name: 'Base Hospital - Panadura' },
-        { id: 'h38', name: 'Base Hospital - Horana' },
-        { id: 'h39', name: 'Base Hospital - Mulleriyawa' },
-        { id: 'h40', name: 'Base Hospital - Avissawella' },
-        { id: 'h41', name: 'Base Hospital - Point Pedro' },
-        { id: 'h42', name: 'Base Hospital - Kayts' },
-        { id: 'h43', name: 'Base Hospital - Nikaweratiya' },
-        { id: 'h44', name: 'Base Hospital - Kuliyapitiya' },
-        { id: 'h45', name: 'Base Hospital - Balapitiya' },
-        { id: 'h46', name: 'Base Hospital - Tangalle' },
-        { id: 'h47', name: 'Base Hospital - Embilipitiya' },
-        { id: 'h48', name: 'Base Hospital - Karawanella' },
-        { id: 'h49', name: 'Base Hospital - Mahiyanganaya' },
-        { id: 'h50', name: 'Base Hospital - Welikanda' },
-        { id: 'h51', name: 'General Hospital - Chilaw' },
-        { id: 'h52', name: 'General Hospital - Matale' },
-        { id: 'h33', name: 'General Hospital - Polonnaruwa' },
-        { id: 'h54', name: 'General Hospital - Ampara' },
-        { id: 'h55', name: 'General Hospital - Hambantota' },
-        { id: 'h56', name: 'Base Hospital - Dikoya' },
-        { id: 'h57', name: 'Base Hospital - Gampola' },
-        { id: 'h58', name: 'Base Hospital - Kantale' },
-        { id: 'h59', name: 'Base Hospital - Medirigiriya' },
-        { id: 'h60', name: 'Base Hospital - Rikillagaskada' }
-    ];
-
     const reportTypes = [
         { id: 'r1', name: 'Full Blood Count (FBC)', price: 1500 },
         { id: 'r2', name: 'Lipid Profile', price: 3000 },
@@ -71,7 +8,77 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'r5', name: 'X-Ray (Chest)', price: 2500 },
         { id: 'r6', name: 'MRI Scan', price: 8500 },
         { id: 'r7', name: 'CT Scan', price: 6500 },
-        { id: 'r8', name: 'Urine Analysis', price: 1200 }
+        { id: 'r8', name: 'Urine Analysis', price: 1200 },
+        { id: 'r9', name: 'Dental X-Ray', price: 1800 },
+        { id: 'r10', name: 'Echocardiogram (ECG)', price: 3500 },
+        { id: 'r11', name: 'Ultrasound Scan', price: 3200 },
+        { id: 'r12', name: 'Bone Density Test', price: 4500 },
+        { id: 'r13', name: 'PCR Test', price: 5500 },
+        { id: 'r14', name: 'Kidney Function Test (KFT)', price: 2800 },
+        { id: 'r15', name: 'Fasting Blood Sugar (FBS)', price: 1000 }
+    ];
+
+    const hospitals = [
+        { id: 'h1', name: 'National Hospital of Sri Lanka (NHSL), Colombo', reports: ['r1', 'r2', 'r3', 'r4', 'r5', 'r6', 'r7', 'r8', 'r10', 'r11', 'r13', 'r14', 'r15'] },
+        { id: 'h2', name: 'Lady Ridgeway Hospital for Children, Colombo', reports: ['r1', 'r5', 'r8', 'r11', 'r13', 'r15'] },
+        { id: 'h3', name: 'Castle Street Hospital for Women', reports: ['r1', 'r2', 'r5', 'r8', 'r11', 'r14', 'r15'] },
+        { id: 'h4', name: 'De Soysa Hospital for Women', reports: ['r1', 'r2', 'r5', 'r8', 'r11', 'r15'] },
+        { id: 'h5', name: 'National Cancer Institute (Apeksha Hospital), Maharagama', reports: ['r1', 'r2', 'r3', 'r5', 'r6', 'r7', 'r11', 'r12', 'r13'] },
+        { id: 'h6', name: 'Eye Hospital, Colombo', reports: ['r1', 'r15'] },
+        { id: 'h7', name: 'Teaching Hospital Colombo South (Kalubowila)', reports: ['r1', 'r2', 'r3', 'r4', 'r5', 'r8', 'r9', 'r10', 'r11', 'r14', 'r15'] },
+        { id: 'h8', name: 'Infectious Disease Hospital (IDH), Angoda', reports: ['r1', 'r3', 'r8', 'r13'] },
+        { id: 'h9', name: 'National Hospital (Teaching), Kandy', reports: ['r1', 'r2', 'r3', 'r4', 'r5', 'r6', 'r7', 'r8', 'r10', 'r11', 'r13', 'r14', 'r15'] },
+        { id: 'h10', name: 'Sirimavo Bandaranaike Specialized Children Hospital, Peradeniya', reports: ['r1', 'r5', 'r8', 'r11', 'r13'] },
+        { id: 'h11', name: 'General Hospital (Teaching), Peradeniya', reports: ['r1', 'r2', 'r3', 'r5', 'r8', 'r10', 'r11', 'r14', 'r15'] },
+        { id: 'h12', name: 'Teaching Hospital Karapitiya, Galle', reports: ['r1', 'r2', 'r3', 'r4', 'r5', 'r6', 'r7', 'r8', 'r10', 'r11', 'r13', 'r14', 'r15'] },
+        { id: 'h13', name: 'Anuradhapura Teaching Hospital', reports: ['r1', 'r2', 'r3', 'r5', 'r8', 'r10', 'r11', 'r14', 'r15'] },
+        { id: 'h14', name: 'Jaffna Teaching Hospital', reports: ['r1', 'r2', 'r3', 'r5', 'r8', 'r10', 'r11', 'r13', 'r14', 'r15'] },
+        { id: 'h15', name: 'Batticaloa Teaching Hospital', reports: ['r1', 'r2', 'r3', 'r5', 'r8', 'r11', 'r14', 'r15'] },
+        { id: 'h16', name: 'Teaching Hospital - Kurunegala', reports: ['r1', 'r2', 'r3', 'r5', 'r6', 'r7', 'r8', 'r10', 'r11', 'r14', 'r15'] },
+        { id: 'h17', name: 'Ratnapura Teaching Hospital', reports: ['r1', 'r2', 'r3', 'r5', 'r8', 'r11', 'r14', 'r15'] },
+        { id: 'h18', name: 'Provincial General Hospital, Badulla', reports: ['r1', 'r2', 'r3', 'r5', 'r8', 'r11', 'r14', 'r15'] },
+        { id: 'h19', name: 'District General Hospital, Gampaha', reports: ['r1', 'r2', 'r5', 'r8', 'r9', 'r11', 'r15'] },
+        { id: 'h20', name: 'District General Hospital, Negombo', reports: ['r1', 'r2', 'r5', 'r8', 'r11', 'r15'] },
+        { id: 'h21', name: 'District General Hospital, Polonnaruwa', reports: ['r1', 'r2', 'r5', 'r8', 'r11', 'r15'] },
+        { id: 'h22', name: 'District General Hospital, Matale', reports: ['r1', 'r2', 'r5', 'r8', 'r11', 'r15'] },
+        { id: 'h23', name: 'Ampara General Hospital', reports: ['r1', 'r2', 'r5', 'r8', 'r11', 'r15'] },
+        { id: 'h24', name: 'Hambantota District General Hospital', reports: ['r1', 'r2', 'r5', 'r8', 'r11', 'r15'] },
+        { id: 'h25', name: 'Chilaw District General Hospital', reports: ['r1', 'r2', 'r5', 'r8', 'r11', 'r15'] },
+        { id: 'h26', name: 'Teaching Hospital - Ragama (North Colombo)', reports: ['r1', 'r2', 'r3', 'r4', 'r5', 'r6', 'r7', 'r8', 'r10', 'r11', 'r13', 'r14', 'r15'] },
+        { id: 'h27', name: 'General Hospital - Kalutara', reports: ['r1', 'r2', 'r5', 'r8', 'r11', 'r15'] },
+        { id: 'h28', name: 'General Hospital - Matara', reports: ['r1', 'r2', 'r5', 'r8', 'r11', 'r15'] },
+        { id: 'h29', name: 'General Hospital - Nuwara Eliya', reports: ['r1', 'r2', 'r5', 'r8', 'r11', 'r15'] },
+        { id: 'h30', name: 'General Hospital - Kegalle', reports: ['r1', 'r2', 'r5', 'r8', 'r11', 'r15'] },
+        { id: 'h31', name: 'General Hospital - Vavuniya', reports: ['r1', 'r2', 'r5', 'r8', 'r11', 'r15'] },
+        { id: 'h32', name: 'General Hospital - Mannar', reports: ['r1', 'r2', 'r5', 'r8', 'r11', 'r15'] },
+        { id: 'h33', name: 'General Hospital - Mullaitivu', reports: ['r1', 'r2', 'r5', 'r8', 'r11', 'r15'] },
+        { id: 'h34', name: 'General Hospital - Kilinochchi', reports: ['r1', 'r2', 'r5', 'r8', 'r11', 'r15'] },
+        { id: 'h35', name: 'General Hospital - Trincomalee', reports: ['r1', 'r2', 'r5', 'r8', 'r11', 'r15'] },
+        { id: 'h36', name: 'District General Hospital - Moneragala', reports: ['r1', 'r2', 'r5', 'r8', 'r11', 'r15'] },
+        { id: 'h37', name: 'Base Hospital - Panadura', reports: ['r1', 'r5', 'r8', 'r15'] },
+        { id: 'h38', name: 'Base Hospital - Horana', reports: ['r1', 'r5', 'r8', 'r15'] },
+        { id: 'h39', name: 'Base Hospital - Mulleriyawa', reports: ['r1', 'r5', 'r8', 'r15'] },
+        { id: 'h40', name: 'Base Hospital - Avissawella', reports: ['r1', 'r5', 'r8', 'r15'] },
+        { id: 'h41', name: 'Base Hospital - Point Pedro', reports: ['r1', 'r5', 'r8', 'r15'] },
+        { id: 'h42', name: 'Base Hospital - Kayts', reports: ['r1', 'r5', 'r8', 'r15'] },
+        { id: 'h43', name: 'Base Hospital - Nikaweratiya', reports: ['r1', 'r5', 'r8', 'r15'] },
+        { id: 'h44', name: 'Base Hospital - Kuliyapitiya', reports: ['r1', 'r5', 'r8', 'r15'] },
+        { id: 'h45', name: 'Base Hospital - Balapitiya', reports: ['r1', 'r5', 'r8', 'r15'] },
+        { id: 'h46', name: 'Base Hospital - Tangalle', reports: ['r1', 'r5', 'r8', 'r15'] },
+        { id: 'h47', name: 'Base Hospital - Embilipitiya', reports: ['r1', 'r5', 'r8', 'r15'] },
+        { id: 'h48', name: 'Base Hospital - Karawanella', reports: ['r1', 'r5', 'r8', 'r15'] },
+        { id: 'h49', name: 'Base Hospital - Mahiyanganaya', reports: ['r1', 'r5', 'r8', 'r15'] },
+        { id: 'h50', name: 'Base Hospital - Welikanda', reports: ['r1', 'r5', 'r8', 'r15'] },
+        { id: 'h51', name: 'General Hospital - Chilaw', reports: ['r1', 'r2', 'r5', 'r8', 'r11', 'r15'] },
+        { id: 'h52', name: 'General Hospital - Matale', reports: ['r1', 'r2', 'r5', 'r8', 'r11', 'r15'] },
+        { id: 'h53', name: 'General Hospital - Polonnaruwa', reports: ['r1', 'r2', 'r5', 'r8', 'r11', 'r15'] },
+        { id: 'h54', name: 'General Hospital - Ampara', reports: ['r1', 'r2', 'r5', 'r8', 'r11', 'r15'] },
+        { id: 'h55', name: 'General Hospital - Hambantota', reports: ['r1', 'r2', 'r5', 'r8', 'r11', 'r15'] },
+        { id: 'h56', name: 'Base Hospital - Dikoya', reports: ['r1', 'r5', 'r8', 'r15'] },
+        { id: 'h57', name: 'Base Hospital - Gampola', reports: ['r1', 'r5', 'r8', 'r15'] },
+        { id: 'h58', name: 'Base Hospital - Kantale', reports: ['r1', 'r5', 'r8', 'r15'] },
+        { id: 'h59', name: 'Base Hospital - Medirigiriya', reports: ['r1', 'r5', 'r8', 'r15'] },
+        { id: 'h60', name: 'Base Hospital - Rikillagaskada', reports: ['r1', 'r5', 'r8', 'r15'] }
     ];
 
     const baseTimeSlots = [
@@ -180,6 +187,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 hospitalSearch.value = hosp.name;
                 hospitalSelect.value = hosp.id;
                 
+                // Update reports available for this hospital
+                populateReportTypes(hosp.reports);
+                
                 // Trigger change event for time slots
                 hospitalSelect.dispatchEvent(new Event('change'));
                 
@@ -205,10 +215,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function populateReportTypes() {
+    function populateReportTypes(availableIds = null) {
         if (!reportTypeCheckboxes) return;
         reportTypeCheckboxes.innerHTML = '';
-        reportTypes.forEach(report => {
+        
+        if (!availableIds) {
+            reportTypeCheckboxes.innerHTML = '<p class="placeholder-text">Please select a hospital first to see available reports.</p>';
+            return;
+        }
+
+        const toDisplay = reportTypes.filter(r => availableIds.includes(r.id));
+
+        if (toDisplay.length === 0) {
+            reportTypeCheckboxes.innerHTML = '<p class="placeholder-text">No reports available for this hospital.</p>';
+            return;
+        }
+
+        toDisplay.forEach(report => {
             const label = document.createElement('label');
             label.className = 'checkbox-label';
             
@@ -223,6 +246,10 @@ document.addEventListener('DOMContentLoaded', () => {
             label.appendChild(document.createTextNode(` ${report.name}`));
             reportTypeCheckboxes.appendChild(label);
         });
+        
+        // Reset selected reports when hospital changes
+        if (selectedReportsInput) selectedReportsInput.value = '';
+        updateSelectedReports();
     }
 
     function updateSelectedReports() {
