@@ -25,7 +25,32 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'h22', name: 'District General Hospital, Matale' },
         { id: 'h23', name: 'Ampara General Hospital' },
         { id: 'h24', name: 'Hambantota District General Hospital' },
-        { id: 'h25', name: 'Chilaw District General Hospital' }
+        { id: 'h25', name: 'Chilaw District General Hospital' },
+        { id: 'h26', name: 'Teaching Hospital - Ragama (North Colombo)' },
+        { id: 'h27', name: 'General Hospital - Kalutara' },
+        { id: 'h28', name: 'General Hospital - Matara' },
+        { id: 'h29', name: 'General Hospital - Nuwara Eliya' },
+        { id: 'h30', name: 'General Hospital - Kegalle' },
+        { id: 'h31', name: 'General Hospital - Vavuniya' },
+        { id: 'h32', name: 'General Hospital - Mannar' },
+        { id: 'h33', name: 'General Hospital - Mullaitivu' },
+        { id: 'h34', name: 'General Hospital - Kilinochchi' },
+        { id: 'h35', name: 'General Hospital - Trincomalee' },
+        { id: 'h36', name: 'District General Hospital - Moneragala' },
+        { id: 'h37', name: 'Base Hospital - Panadura' },
+        { id: 'h38', name: 'Base Hospital - Horana' },
+        { id: 'h39', name: 'Base Hospital - Mulleriyawa' },
+        { id: 'h40', name: 'Base Hospital - Avissawella' },
+        { id: 'h41', name: 'Base Hospital - Point Pedro' },
+        { id: 'h42', name: 'Base Hospital - Kayts' },
+        { id: 'h43', name: 'Base Hospital - Nikaweratiya' },
+        { id: 'h44', name: 'Base Hospital - Kuliyapitiya' },
+        { id: 'h45', name: 'Base Hospital - Balapitiya' },
+        { id: 'h46', name: 'Base Hospital - Tangalle' },
+        { id: 'h47', name: 'Base Hospital - Embilipitiya' },
+        { id: 'h48', name: 'Base Hospital - Karawanella' },
+        { id: 'h49', name: 'Base Hospital - Mahiyanganaya' },
+        { id: 'h50', name: 'Base Hospital - Welikanda' }
     ];
 
     const reportTypes = [
@@ -48,6 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements
     const occupationSelect = document.getElementById('occupationSelect');
     const hospitalSelect = document.getElementById('hospitalSelect');
+    const hospitalSearch = document.getElementById('hospitalSearch');
     const reportTypeCheckboxes = document.getElementById('reportTypeCheckboxes');
     const selectedReportsInput = document.getElementById('selectedReports');
     const appointmentDate = document.getElementById('appointmentDate');
@@ -55,6 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const selectedTimeSlotInput = document.getElementById('selectedTimeSlot');
     const livePriceDisplay = document.getElementById('livePrice');
     const bookingForm = document.getElementById('booking-form');
+    const patientIdInput = document.getElementById('patientId');
+    const patientNameInput = document.getElementById('patientName');
     
     // Modal Elements
     const modal = document.getElementById('successModal');
@@ -72,8 +100,17 @@ document.addEventListener('DOMContentLoaded', () => {
         loadRecentBooking();
         
         // Event Listeners
+        patientIdInput.addEventListener('input', function() {
+            this.value = this.value.toUpperCase().replace(/[^0-9VX]/g, '');
+        });
+        patientNameInput.addEventListener('input', function() {
+            this.value = this.value.replace(/[0-9]/g, '');
+        });
         occupationSelect.addEventListener('change', updateSelectedReports);
         hospitalSelect.addEventListener('change', generateTimeSlots);
+        hospitalSearch.addEventListener('input', (e) => {
+            populateHospitals(e.target.value);
+        });
         appointmentDate.addEventListener('change', generateTimeSlots);
         bookingForm.addEventListener('submit', handleBookingSubmit);
         
@@ -85,13 +122,33 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function populateHospitals() {
-        hospitals.forEach(hosp => {
+    function populateHospitals(filter = '') {
+        const searchTerm = filter.toLowerCase();
+        
+        // Save current selection if possible
+        const currentSelection = hospitalSelect.value;
+        
+        // Clear except first option
+        hospitalSelect.innerHTML = '<option value="" disabled selected>Choose a hospital...</option>';
+        
+        const filtered = hospitals.filter(hosp => 
+            hosp.name.toLowerCase().includes(searchTerm)
+        );
+
+        filtered.forEach(hosp => {
             const option = document.createElement('option');
             option.value = hosp.id;
             option.textContent = hosp.name;
+            if (hosp.id === currentSelection) option.selected = true;
             hospitalSelect.appendChild(option);
         });
+
+        // If filtering and current selection is no longer available, reset selection
+        if (filter && !filtered.find(h => h.id === currentSelection)) {
+            // keep default
+        } else if (currentSelection) {
+            hospitalSelect.value = currentSelection;
+        }
     }
 
     function populateReportTypes() {

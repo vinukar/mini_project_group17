@@ -28,6 +28,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('sum-price').textContent = `LKR ${requestData.totalPrice.toFixed(2)}`;
     
     // Add input formatting for realistic UX
+    document.getElementById('cardName').addEventListener('input', function(e) {
+        e.target.value = e.target.value.replace(/[0-9]/g, '');
+    });
+
     document.getElementById('cardNumber').addEventListener('input', function(e) {
         let value = e.target.value.replace(/\D/g, ''); // keep only digits
         let formatted = value.replace(/(.{4})/g, '$1 ').trim();

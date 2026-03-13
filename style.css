@@ -426,6 +426,14 @@ textarea {
     transition: var(--transition);
 }
 
+.select-search-input {
+    margin-bottom: 0.5rem;
+    background-color: var(--primary-light) !important;
+    border-color: var(--primary) !important;
+    font-size: 0.9rem !important;
+    padding: 0.6rem 1rem !important;
+}
+
 textarea {
     resize: vertical;
     min-height: 80px;
