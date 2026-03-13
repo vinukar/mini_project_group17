@@ -49,10 +49,55 @@ document.addEventListener('DOMContentLoaded', () => {
     
     document.getElementById('expiry').addEventListener('input', function(e) {
         let value = e.target.value.replace(/\D/g, '');
-        if (value.length > 2) {
-            value = value.substring(0, 2) + '/' + value.substring(2, 4);
+        let formattedValue = '';
+
+        if (value.length > 0) {
+            // Month validation: first digit can only be 0 or 1
+            let m1 = value[0];
+            if (m1 > '1') {
+                formattedValue = '0' + m1; // e.g., typing '5' becomes '05'
+            } else {
+                formattedValue = m1;
+                if (value.length >= 2) {
+                    let m2 = value[1];
+                    let month = m1 + m2;
+                    if (parseInt(month) > 12) {
+                        formattedValue = m1; // Reject second digit if month > 12
+                    } else if (parseInt(month) === 0 && value.length === 2) {
+                        formattedValue = '0'; // Don't allow '00'
+                    } else {
+                        formattedValue = month;
+                    }
+                }
+            }
         }
-        e.target.value = value;
+
+        if (value.length > 2 && formattedValue.length === 2) {
+            let yearPart = value.substring(2, 4);
+            let y1 = yearPart[0];
+            
+            // Year validation: must be 26 or above
+            // First digit of year must be 2, 3, 4, 5, 6, 7, 8, or 9
+            if (y1 < '2') {
+                // Reject digit if it's less than 2
+            } else {
+                formattedValue += '/' + y1;
+                if (yearPart.length >= 2) {
+                    let y2 = yearPart[1];
+                    let year = y1 + y2;
+                    if (parseInt(year) < 26) {
+                        // If first digit was 2 and second makes it < 26, reject second
+                    } else {
+                        formattedValue = formattedValue.substring(0, 3) + year;
+                    }
+                }
+            }
+        } else if (value.length === 2 && formattedValue.length === 2 && e.inputType !== 'deleteContentBackward') {
+            formattedValue += '/';
+        }
+
+        e.target.value = formattedValue;
+        this.setCustomValidity('');
     });
     
     document.getElementById('cvv').addEventListener('input', function(e) {
@@ -62,6 +107,34 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle submitting the payment
     paymentForm.addEventListener('submit', (e) => {
         e.preventDefault();
+
+        // Validate expiry date
+        const expiryInput = document.getElementById('expiry');
+        const expiryValue = expiryInput.value;
+        const expiryParts = expiryValue.split('/');
+        
+        if (expiryParts.length !== 2 || expiryParts[0].length !== 2 || expiryParts[1].length !== 2) {
+            expiryInput.setCustomValidity('Please enter a valid expiry date in MM/YY format');
+            expiryInput.reportValidity();
+            return;
+        }
+
+        const monthNum = parseInt(expiryParts[0], 10);
+        const yearNum = parseInt(expiryParts[1], 10);
+
+        if (isNaN(monthNum) || monthNum < 1 || monthNum > 12) {
+            expiryInput.setCustomValidity('Month must be between 01 and 12');
+            expiryInput.reportValidity();
+            return;
+        }
+
+        if (isNaN(yearNum) || yearNum < 26) {
+            expiryInput.setCustomValidity('Year must be 26 or above');
+            expiryInput.reportValidity();
+            return;
+        }
+
+        expiryInput.setCustomValidity('');
         
         // Simulate secure network processing
         const btn = document.getElementById('payBtn');
