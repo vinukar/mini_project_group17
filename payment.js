@@ -213,6 +213,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Handle modal close
     modalCloseBtn.addEventListener('click', () => {
-        window.location.href = 'index.html';
+        window.location.href = 'log.html';
     });
 });
