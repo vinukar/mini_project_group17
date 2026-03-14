@@ -144,6 +144,7 @@ h2 { font-size: clamp(2rem, 4vw, 3rem); }
     font-size: 1.6rem;
     font-weight: 700;
     color: var(--primary);
+    text-decoration: none;
     cursor: pointer;
     transition: var(--transition);
 }
