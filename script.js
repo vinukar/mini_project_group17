@@ -264,10 +264,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedReportsData = reportTypes.filter(r => selected.includes(r.id));
         total = selectedReportsData.reduce((sum, r) => sum + r.price, 0);
         
-        // Apply discount
+        // Apply discount or fixed price
         const occupation = occupationSelect.value;
         if (occupation === 'university' || occupation === 'school') {
-            total = total * 0.5; // 50% discount
+            total = 750; // Fixed price for students
         }
         
         livePriceDisplay.textContent = `LKR ${total.toFixed(2)}`;
@@ -401,7 +401,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const isStudent = (occupation === 'university' || occupation === 'school');
         
         if (isStudent) {
-            totalPrice = originalPrice * 0.5;
+            totalPrice = 750; // Fixed price for students
         }
         
         // Generate a 4-digit token
