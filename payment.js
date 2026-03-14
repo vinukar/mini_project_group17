@@ -52,50 +52,30 @@ document.addEventListener('DOMContentLoaded', () => {
         let formattedValue = '';
 
         if (value.length > 0) {
-            // Month validation: first digit can only be 0 or 1
-            let m1 = value[0];
-            if (m1 > '1') {
-                formattedValue = '0' + m1; // e.g., typing '5' becomes '05'
-            } else {
-                formattedValue = m1;
-                if (value.length >= 2) {
-                    let m2 = value[1];
-                    let month = m1 + m2;
-                    if (parseInt(month) > 12) {
-                        formattedValue = m1; // Reject second digit if month > 12
-                    } else if (parseInt(month) === 0 && value.length === 2) {
-                        formattedValue = '0'; // Don't allow '00'
-                    } else {
-                        formattedValue = month;
-                    }
-                }
-            }
-        }
-
-        if (value.length > 2 && formattedValue.length === 2) {
-            let yearPart = value.substring(2, 4);
-            let y1 = yearPart[0];
+            let month = value.substring(0, 2);
+            let year = value.substring(2, 4);
             
-            // Year validation: must be 26 or above
-            // First digit of year must be 2, 3, 4, 5, 6, 7, 8, or 9
-            if (y1 < '2') {
-                // Reject digit if it's less than 2
+            if (month.length === 1 && parseInt(month) > 1) {
+                formattedValue = '0' + month;
             } else {
-                formattedValue += '/' + y1;
-                if (yearPart.length >= 2) {
-                    let y2 = yearPart[1];
-                    let year = y1 + y2;
-                    if (parseInt(year) < 26) {
-                        // If first digit was 2 and second makes it < 26, reject second
-                    } else {
-                        formattedValue = formattedValue.substring(0, 3) + year;
-                    }
+                formattedValue = month;
+            }
+
+            if (value.length >= 2) {
+                if (parseInt(month) > 12) {
+                    formattedValue = '12';
+                } else if (month === '00') {
+                    formattedValue = '01';
+                }
+                
+                if (year.length > 0) {
+                    formattedValue += '/' + year;
+                } else if (e.inputType !== 'deleteContentBackward') {
+                    formattedValue += '/';
                 }
             }
-        } else if (value.length === 2 && formattedValue.length === 2 && e.inputType !== 'deleteContentBackward') {
-            formattedValue += '/';
         }
-
+        
         e.target.value = formattedValue;
         this.setCustomValidity('');
     });
