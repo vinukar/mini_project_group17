@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - VitaCare</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="Logo.png">
+    <style>
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-light), #fff);
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-page::before {
+            content: '';
+            position: absolute;
+            top: -10%;
+            right: -5%;
+            width: 50%;
+            height: 80%;
+            background: radial-gradient(circle, var(--primary-light) 0%, rgba(248, 250, 252, 0) 70%);
+            z-index: 0;
+            border-radius: 50%;
+            filter: blur(60px);
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 450px;
+            z-index: 10;
+        }
+
+        .login-card {
+            padding: 3rem;
+            text-align: center;
+        }
+
+        .login-header {
+            margin-bottom: 2.5rem;
+        }
+
+        .login-header .logo {
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .login-header h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-header p {
+            color: var(--text-muted);
+        }
+
+        .login-tabs {
+            display: flex;
+            background: rgba(0, 0, 0, 0.05);
+            padding: 0.25rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 2rem;
+        }
+
+        .login-tab {
+            flex: 1;
+            padding: 0.75rem;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+        }
+
+        .login-tab.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .login-forms-wrapper {
+            position: relative;
+            overflow: hidden;
+            min-height: 400px;
+        }
+
+        .login-form {
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .login-form.hidden {
+            display: none;
+            opacity: 0;
+            transform: translateX(20px);
+        }
+
+        .login-form:not(.hidden) {
+            display: block;
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .form-footer {
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .form-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .alert-danger {
+            background: #ffe4e6;
+            color: var(--danger);
+            border: 1px solid #fecdd3;
+        }
+
+        /* Modern Input Styling */
+        .form-group {
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group label i {
+            color: var(--primary);
+            font-size: 1rem;
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            color: var(--text-main);
+            transition: var(--transition);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .login-form input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: #fff;
+            box-shadow: 0 0 0 4px var(--primary-light), 0 4px 12px rgba(14, 165, 233, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .login-form input::placeholder {
+            color: #94a3b8;
+        }
+
+        .alert-success {
+            background: #dcfce7;
+            color: var(--success);
+            border: 1px solid #bbf7d0;
+        }
+
+        /* Dark mode adjustments for login */
+        body.dark-mode .login-page {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+        }
+        body.dark-mode .login-tab.active {
+            background: var(--surface);
+            color: var(--primary);
+        }
+
+        body.dark-mode .login-form input {
+            background: rgba(30, 41, 59, 0.5);
+            border-color: rgba(255, 255, 255, 0.1);
+            color: #f8fafc;
+        }
+
+        body.dark-mode .login-form input:focus {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.2), 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        body.dark-mode .login-form input::placeholder {
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-page">
+        <div class="login-container">
+            <div class="glass-panel login-card">
+                <div class="login-header">
+                    <a href="index.html" class="logo">
+                        <i class="fa-solid fa-heart-pulse"></i>
+                        <span>VitaCare</span>
+                    </a>
+                    <h2 id="form-title">Welcome Back</h2>
+                    <p id="form-subtitle">Please sign in to your account</p>
+                </div>
+
+                <div class="login-tabs">
+                    <button class="login-tab active" id="tab-login">Login</button>
+                    <button class="login-tab" id="tab-signup">Sign Up</button>
+                </div>
+
+                <div id="auth-alert" class="alert"></div>
+
+                <div class="login-forms-wrapper">
+                    <!-- Login Form -->
+                    <form id="login-form" class="login-form">
+                        <div class="form-group">
+                            <label for="login-email"><i class="fa-solid fa-envelope"></i> Email Address</label>
+                            <input type="email" id="login-email" placeholder="Enter your email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="login-password"><i class="fa-solid fa-lock"></i> Password</label>
+                            <input type="password" id="login-password" placeholder="Enter your password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Sign In <i class="fa-solid fa-arrow-right-to-bracket"></i></button>
+                        <div class="form-footer">
+                            <p>Don't have an account? <a href="#" id="go-to-signup">Sign Up</a></p>
+                        </div>
+                    </form>
+
+                    <!-- Signup Form -->
+                    <form id="signup-form" class="login-form hidden">
+                        <div class="form-group">
+                            <label for="signup-name"><i class="fa-solid fa-user"></i> Full Name</label>
+                            <input type="text" id="signup-name" placeholder="Enter your full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="signup-email"><i class="fa-solid fa-envelope"></i> Email Address</label>
+                            <input type="email" id="signup-email" placeholder="Enter your email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="signup-password"><i class="fa-solid fa-lock"></i> Password</label>
+                            <input type="password" id="signup-password" placeholder="Create a password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Create Account <i class="fa-solid fa-user-plus"></i></button>
+                        <div class="form-footer">
+                            <p>Already have an account? <a href="#" id="go-to-login">Sign In</a></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="theme.js"></script>
+    <script src="auth.js" defer></script>
+    <script src="login.js" defer></script>
+</body>
+</html>
