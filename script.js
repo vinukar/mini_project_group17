@@ -130,6 +130,14 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
+        // NIC Age Validation Listener
+        if (patientIdInput) {
+            patientIdInput.addEventListener('input', function() {
+                const age = getAgeFromNIC(this.value);
+                updateOccupationOptions(age);
+            });
+        }
+
         // Searchable Select Logic
         if (hospitalSearch && hospitalSelectWrapper) {
             hospitalSearch.addEventListener('focus', () => {
@@ -501,6 +509,76 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             modal.style.display = 'none';
         }, 300); // match transition duration
+    }
+
+    // --- NIC Validation Helpers ---
+    function getAgeFromNIC(nic) {
+        if (!nic) return null;
+        let birthYear = null;
+
+        // Old NIC: 9 digits + V/X
+        if (nic.length === 10) {
+            const yearPart = nic.substring(0, 2);
+            birthYear = 1900 + parseInt(yearPart);
+        } 
+        // New NIC: 12 digits
+        else if (nic.length === 12) {
+            const yearPart = nic.substring(0, 4);
+            birthYear = parseInt(yearPart);
+        }
+
+        if (!birthYear) return null;
+        const currentYear = new Date().getFullYear();
+        return currentYear - birthYear;
+    }
+
+    function updateOccupationOptions(age) {
+        if (!occupationSelect) return;
+        
+        const options = occupationSelect.options;
+        const schoolOption = Array.from(options).find(opt => opt.value === 'school');
+        const universityOption = Array.from(options).find(opt => opt.value === 'university');
+        const generalOption = Array.from(options).find(opt => opt.value === 'general');
+
+        // Reset display and state
+        [schoolOption, universityOption].forEach(opt => {
+            if (opt) {
+                opt.disabled = false;
+                opt.style.display = '';
+            }
+        });
+
+        if (age === null) return;
+
+        if (age < 18) {
+            // Under 18: Only School or General
+            if (universityOption) {
+                universityOption.disabled = true;
+                universityOption.style.display = 'none';
+            }
+            if (occupationSelect.value === 'university') occupationSelect.value = 'school';
+        } else if (age >= 19 && age <= 25) {
+            // 19-25: Only University or General
+            if (schoolOption) {
+                schoolOption.disabled = true;
+                schoolOption.style.display = 'none';
+            }
+            if (occupationSelect.value === 'school') occupationSelect.value = 'university';
+        } else {
+            // Over 25: Only General
+            if (schoolOption) {
+                schoolOption.disabled = true;
+                schoolOption.style.display = 'none';
+            }
+            if (universityOption) {
+                universityOption.disabled = true;
+                universityOption.style.display = 'none';
+            }
+            occupationSelect.value = 'general';
+        }
+
+        // Update price based on new selection
+        updateSelectedReports();
     }
 
     // Run init
