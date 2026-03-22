@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - VitaCare</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="Logo.png">
+    <script src="auth.js"></script>
+    <style>
+        .profile-section {
+            padding: 120px 0 5rem 0;
+            min-height: 90vh;
+        }
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .profile-card, .settings-card {
+            padding: 2.5rem;
+        }
+        .user-avatar {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 0 auto 1.5rem;
+            box-shadow: var(--shadow-lg);
+        }
+        .info-group {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .info-group:last-child {
+            border-bottom: none;
+        }
+        .info-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.25rem;
+        }
+        .info-value {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+        .alert {
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+        .alert-danger { background: #ffe4e6; color: var(--danger); border: 1px solid #fecdd3; }
+        .alert-success { background: #dcfce7; color: var(--success); border: 1px solid #bbf7d0; }
+
+        /* Modern Input Styling */
+        .form-group label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group label i {
+            color: var(--primary);
+            font-size: 1rem;
+        }
+
+        .settings-card input {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            color: var(--text-main);
+            transition: var(--transition);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+            margin-bottom: 0.5rem;
+        }
+
+        .settings-card input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: #fff;
+            box-shadow: 0 0 0 4px var(--primary-light), 0 4px 12px rgba(14, 165, 233, 0.1);
+            transform: translateY(-1px);
+        }
+
+        /* Dark Mode Overrides for Inputs */
+        body.dark-mode .settings-card input {
+            background: rgba(30, 41, 59, 0.5);
+            border-color: rgba(255, 255, 255, 0.1);
+            color: #f8fafc;
+        }
+
+        body.dark-mode .settings-card input:focus {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.2), 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .profile-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <i class="fa-solid fa-heart-pulse"></i>
+                <span>VitaCare</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="report.html">Request Report</a></li>
+                <li><a href="log.html">Reservation Log</a></li>
+                <li><a href="profile.html" class="active">Profile</a></li>
+                <li><a href="#" id="logout-btn" class="nav-logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+                <li>
+                    <button id="theme-toggle" class="btn" aria-label="Toggle Theme">
+                        <i class="fa-solid fa-sun"></i>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="profile-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>User Profile</h2>
+                <p>Manage your account information and security settings.</p>
+            </div>
+
+            <div class="profile-grid">
+                <!-- User Info Column -->
+                <div class="profile-card glass-panel text-center">
+                    <div class="user-avatar" id="avatar-initials">VC</div>
+                    <div class="info-group">
+                        <div class="info-label">Full Name</div>
+                        <div class="info-value" id="profile-name">Patient Name</div>
+                    </div>
+                    <div class="info-group">
+                        <div class="info-label">Email Address</div>
+                        <div class="info-value" id="profile-email">patient@example.com</div>
+                    </div>
+                    <div class="info-group">
+                        <div class="info-label">National Identity Card</div>
+                        <div class="info-value" id="profile-nic">000000000V</div>
+                    </div>
+                </div>
+
+                <!-- Settings Column -->
+                <div class="settings-card glass-panel">
+                    <h3>Change Password</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 2rem;">Ensure your account is using a long, random password to stay secure.</p>
+                    
+                    <div id="settings-alert" class="alert"></div>
+
+                    <form id="password-form">
+                        <div class="form-group">
+                            <label for="current-password"><i class="fa-solid fa-lock"></i> Current Password</label>
+                            <input type="password" id="current-password" placeholder="Enter current password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="new-password"><i class="fa-solid fa-key"></i> New Password</label>
+                            <input type="password" id="new-password" placeholder="Enter new password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm-password"><i class="fa-solid fa-shield-check"></i> Confirm New Password</label>
+                            <input type="password" id="confirm-password" placeholder="Confirm new password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Update Password <i class="fa-solid fa-save"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container footer-container">
+            <a href="index.html" class="logo">
+                <i class="fa-solid fa-heart-pulse"></i>
+                <span>VitaCare</span>
+            </a>
+            <p>&copy; 2026 VitaCare Medical. All rights reserved. | <strong>Project by Group-17</strong></p>
+        </div>
+    </footer>
+
+    <script src="theme.js"></script>
+    <script src="profile.js"></script>
+</body>
+</html>

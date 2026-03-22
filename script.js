@@ -117,13 +117,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (reportTypeCheckboxes) populateReportTypes();
         if (appointmentDate) setMinDate();
         loadRecentBooking();
+        autoFillUserDetails();
         
         // Event Listeners
-        if (patientIdInput) {
-            patientIdInput.addEventListener('input', function() {
-                this.value = this.value.toUpperCase().replace(/[^0-9VX]/g, '');
-            });
-        }
         if (patientNameInput) {
             patientNameInput.addEventListener('input', function() {
                 this.value = this.value.replace(/[0-9]/g, '');
@@ -133,6 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // NIC Age Validation Listener
         if (patientIdInput) {
             patientIdInput.addEventListener('input', function() {
+                this.value = this.value.toUpperCase().replace(/[^0-9VX]/g, '');
                 const age = getAgeFromNIC(this.value);
                 updateOccupationOptions(age);
             });
@@ -168,6 +165,26 @@ document.addEventListener('DOMContentLoaded', () => {
         window.addEventListener('click', (e) => {
             if (modal && e.target === modal) closeModal();
         });
+    }
+
+    function autoFillUserDetails() {
+        if (typeof Auth !== 'undefined') {
+            const user = Auth.getCurrentUser();
+            if (user) {
+                if (patientNameInput) {
+                    patientNameInput.value = user.name;
+                    // Make it read-only to prevent confusion, or just pre-fill
+                    // patientNameInput.readOnly = true;
+                }
+                if (patientIdInput && user.nic) {
+                    patientIdInput.value = user.nic;
+                    // Trigger age validation for the pre-filled NIC
+                    const age = getAgeFromNIC(user.nic);
+                    updateOccupationOptions(age);
+                    // patientIdInput.readOnly = true;
+                }
+            }
+        }
     }
 
     function populateHospitals(filter = '') {

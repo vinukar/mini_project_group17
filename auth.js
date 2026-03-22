@@ -16,26 +16,25 @@ const Auth = {
         const users = JSON.parse(localStorage.getItem('vitacare_users') || '[]');
         const user = users.find(u => u.email === email && u.password === password);
         
-        if (user) {
             localStorage.setItem('vitacare_logged_in', 'true');
             localStorage.setItem('vitacare_user', JSON.stringify({
                 name: user.name,
-                email: user.email
+                email: user.email,
+                nic: user.nic
             }));
             return { success: true };
-        }
         return { success: false, message: 'Invalid email or password' };
     },
 
     // Signup user
-    signup: function(name, email, password) {
+    signup: function(name, email, password, nic) {
         let users = JSON.parse(localStorage.getItem('vitacare_users') || '[]');
         
         if (users.find(u => u.email === email)) {
             return { success: false, message: 'Email already exists' };
         }
 
-        const newUser = { name, email, password };
+        const newUser = { name, email, password, nic };
         users.push(newUser);
         localStorage.setItem('vitacare_users', JSON.stringify(users));
         
@@ -48,6 +47,25 @@ const Auth = {
         localStorage.removeItem('vitacare_logged_in');
         localStorage.removeItem('vitacare_user');
         window.location.href = 'login.html';
+    },
+
+    // Change Password
+    changePassword: function(currentPassword, newPassword) {
+        const currentUser = this.getCurrentUser();
+        if (!currentUser) return { success: false, message: 'Not logged in' };
+
+        let users = JSON.parse(localStorage.getItem('vitacare_users') || '[]');
+        const userIndex = users.findIndex(u => u.email === currentUser.email && u.password === currentPassword);
+        
+        if (userIndex === -1) {
+            return { success: false, message: 'Current password is incorrect' };
+        }
+
+        // Update password
+        users[userIndex].password = newPassword;
+        localStorage.setItem('vitacare_users', JSON.stringify(users));
+        
+        return { success: true };
     },
 
     // Initialize page protection

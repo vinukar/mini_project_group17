@@ -65,10 +65,11 @@ document.addEventListener('DOMContentLoaded', () => {
     signupForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const name = document.getElementById('signup-name').value;
+        const nic = document.getElementById('signup-nic').value;
         const email = document.getElementById('signup-email').value;
         const password = document.getElementById('signup-password').value;
 
-        const result = Auth.signup(name, email, password);
+        const result = Auth.signup(name, email, password, nic);
         
         if (result.success) {
             showAlert('Account created successfully! Redirecting...', 'success');
