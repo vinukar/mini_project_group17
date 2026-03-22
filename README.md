@@ -18,6 +18,6 @@ Instant Confirmation: Automated generation of a unique Token Number upon success
 🌓 User Experience
 Dark & Light Mode: A seamless toggle to switch between themes for better accessibility.
 
-Reservation Log: A comprehensive history for users to track, view, and print their previous medical report requests and payment receipts.
+My Account Dashboard: A comprehensive history for users to track, view, and print their previous medical report requests and payment receipts, alongside personal profile management.
 
 Responsive Design: Fully optimized for different screen sizes, from desktops to mobile devices.
