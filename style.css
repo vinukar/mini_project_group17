@@ -200,6 +200,19 @@ h2 { font-size: clamp(2rem, 4vw, 3rem); }
     font-weight: 600;
 }
 
+.nav-logout {
+    color: var(--danger) !important;
+    font-weight: 600 !important;
+}
+
+.nav-logout:hover {
+    color: #b91c1c !important;
+}
+
+.nav-logout i {
+    margin-right: 0.25rem;
+}
+
 /* Hero Section */
 .hero {
     padding-top: 120px;
